@@ -61,7 +61,7 @@ window.LL_CONFIG = window.LL_CONFIG || {
     if (opts.token) h.Authorization = 'Bearer ' + opts.token;
     if (opts.headers) Object.keys(opts.headers).forEach(function(k){ h[k] = opts.headers[k]; });
     return fetch(CFG.url + path, { method: opts.method || 'GET', headers: h, body: opts.body ? JSON.stringify(opts.body) : undefined })
-      .catch(function(){ throw fail('offline', 'Could not reach the server. Check your connection.'); })
+      .catch(function(){ throw fail('offline', 'We couldn\u2019t connect. Check your internet and try again.'); })
       .then(function(r){
         return r.text().then(function(t){
           var body = null; try{ body = t ? JSON.parse(t) : null; }catch(e){}
@@ -1261,7 +1261,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
 .nudge .nx{border:1px solid var(--line); background:transparent; color:var(--muted); border-radius:999px; padding:.45rem .9rem; font:inherit; font-size:.9rem; cursor:pointer}
 .wa{display:inline-flex; align-items:center; gap:.5rem; text-decoration:none}
 .sharecard .actions{display:flex; flex-wrap:wrap; gap:.6rem}
-.ah-tip{margin:.7rem 0 0; font-size:.92rem; opacity:.9; max-width:34rem}
+.ah-tip{display:inline-block; margin:.7rem 0 .7rem; padding:.4rem .75rem; border-radius:.8rem; background:rgba(10,20,60,.2); font-size:.92rem; max-width:34rem}
 .ah-tip:empty{display:none}
 .mvbtn{margin:.1rem 0 .2rem 2.1rem; padding:.3rem .8rem; min-height:2.2rem; border:1px solid var(--line); border-radius:999px; background:var(--surface); color:var(--muted); font:inherit; font-size:.85rem; font-weight:600; cursor:pointer}
 .welcomelist{margin:.4rem 0 1rem; padding-left:1.2rem; display:grid; gap:.35rem}
@@ -1282,6 +1282,42 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
 .wnlist strong{display:block}
 .wnlist span{color:var(--muted)}
 .wndate{font-size:.85rem; color:var(--muted); margin:0 0 .5rem}
+
+/* v37 usability */
+.backlink{display:none}
+.signedin .backlink{display:inline-flex; align-items:center; gap:.35rem; min-height:44px; margin:0 0 .4rem; font-weight:600; text-decoration:none; color:var(--ink)}
+.signedin .backlink:hover{text-decoration:underline}
+.llt{white-space:nowrap; width:max-content; position:fixed; left:0; right:0; margin:0 auto; bottom:1.1rem; z-index:70; display:flex; align-items:center; gap:.9rem; max-width:calc(100% - 2rem); padding:.7rem 1rem; border-radius:999px; background:var(--ink); color:var(--bg); font-weight:600; box-shadow:0 10px 30px rgba(20,30,70,.3)}
+.llt[hidden]{display:none}
+.llt button{font:inherit; font-weight:800; min-height:44px; padding:0 .6rem; border:0; background:transparent; color:inherit; text-decoration:underline; cursor:pointer}
+@media (prefers-reduced-motion:no-preference){ .llt{animation:rise .25s ease-out both} }
+.lechint{margin:.2rem 0 1rem; padding:.7rem .9rem; border-radius:.9rem; border:1px dashed color-mix(in srgb, var(--accent) 55%, var(--line)); background:color-mix(in srgb, var(--accent) 8%, var(--surface)); color:var(--ink); font-weight:600}
+.lechint[hidden]{display:none}
+@media (pointer:coarse),(max-width:820px){
+  header nav a{min-height:44px; display:inline-flex; align-items:center}
+  .chip{min-height:44px}
+  button.sw{width:44px; height:44px}
+  .fav{min-width:44px; min-height:44px}
+  .exhead{min-height:44px}
+  button.lnk{min-height:44px}
+  .plusbar a{position:relative}
+  .plusbar a::after{content:''; position:absolute; inset:-8px -4px}
+  .mvbtn,.nudge .nx{min-height:44px}
+  .tick input{width:1.5rem; height:1.5rem; margin-top:.1rem}
+  label.tick{min-height:44px; align-items:center}
+  a.brand{min-height:44px; display:inline-flex; align-items:center}
+  a.cta,.ah-btn{min-height:44px}
+  .plusbar .pbx{position:relative; min-height:0; height:2rem}
+  .plusbar .pbx::after{content:''; position:absolute; inset:-8px -6px}
+  select,.footact,.igfoot{min-height:44px}
+  .igfoot{display:inline-flex; align-items:center}
+  summary{min-height:44px; display:flex; align-items:center}
+  body select,body .per select,body .pcard select{min-height:44px}
+  .setup-steps a{display:inline-block; padding:.45rem 0; min-height:44px}
+  input[type=checkbox]{min-width:1.4rem; min-height:1.4rem}
+  #clubAdmin button,.adrow button,#clDemo button,li > button:not(.mvbtn){min-height:44px}
+  .fcol a,.sitefoot .fcol a{display:flex; align-items:center; min-height:44px}
+}
 </style>
 </head>
 <body>
@@ -1293,6 +1329,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
   <button type="button" class="rbtn" id="restSkip">Skip</button>
 </div>
 <span class="vh" id="restLive" role="status" aria-live="polite"></span>
+<div class="llt" id="llToast" role="status" aria-live="polite" hidden><span id="llToastTxt"></span><button type="button" id="llToastBtn" hidden></button></div>
 <button type="button" id="toTop" class="totop" aria-label="Back to top" hidden>↑</button>
 <div class="wrap">
   <header>
@@ -1348,6 +1385,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
         </details>
         <p class="plan-note pub" id="keepTip">Tip: <a href="#signup">create a free profile</a> to keep your plan next time. Without one, the site resets to this example week when you open it again.</p>
         <div class="stephead first"><span class="sn">1</span><div><strong>Add your lectures</strong><span>Tap a slot when you’re busy. Use “Mark slots as” under the grid for matches or other commitments.</span></div></div>
+        <p class="lechint" id="lecHint" hidden>Nothing marked yet. Tap the slots when you have lectures, and your sessions will fit around them.</p>
         <div class="row viewbar">
           <span class="grp">View</span>
           <div class="chips" role="group" aria-label="View">
@@ -1526,6 +1564,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
 </main>
 
 <main id="view-about" hidden>
+  <a class="backlink" href="#app">← Back to my space</a>
   <div class="about-top">
     <p class="eyebrow">Our story</p>
     <h1 class="about-h1">Hi, I’m Lewis, and this is why I’m building LectureLift</h1>
@@ -1567,6 +1606,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
 </main>
 
 <main id="view-mate" hidden>
+  <a class="backlink" href="#app">← Back to my space</a>
   <div class="about-top">
     <p class="eyebrow">With a mate</p>
     <h1 class="about-h1">Train with a mate</h1>
@@ -1593,6 +1633,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
 </main>
 
 <main id="view-tips" hidden>
+  <a class="backlink" href="#app">← Back to my space</a>
   <div class="about-top">
     <p class="eyebrow">Training tips</p>
     <h1 class="about-h1">Five 30-minute gym sessions for busy students</h1>
@@ -1677,6 +1718,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
 </main>
 
 <main id="view-contact" hidden>
+  <a class="backlink" href="#app">← Back to my space</a>
   <div class="about-top">
     <p class="eyebrow">Contact</p>
     <h1 class="about-h1">Contact</h1>
@@ -1803,7 +1845,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
       <p class="localonly">This removes your timetable, plan, progress, saved weeks, profile and settings from this browser. It cannot be undone. It does not affect anything you sent through the early-list form.</p>
       <p class="cloudonly">This removes your timetable, plan, progress, saved weeks, profile and settings from this browser, and logs you out on this device. If you have an account, your account and the plan saved with it are not deleted, so if you log in again your plan comes back. To delete those too, log in and use “Delete my account” in My space. It does not affect anything you sent through the early-list form.</p>
       <div class="actions">
-        <button type="button" class="btn ghost" id="delAsk">Delete my data on this device</button>
+        <button type="button" class="btn ghost" id="delAsk">Delete my data</button>
         <button type="button" class="btn" id="delYes" hidden>Yes, delete everything</button>
         <button type="button" class="btn ghost" id="delNo" hidden>Keep my data</button>
       </div>
@@ -1865,6 +1907,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
 </main>
 
 <main id="view-start" hidden>
+  <a class="backlink" href="#app">← Back to my space</a>
   <div class="about-top">
     <p class="eyebrow">Starter plan</p>
     <h1 class="about-h1">Build my starter plan</h1>
@@ -1980,7 +2023,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
       </div>
       <label class="per" for="adNote">Note for the player</label>
       <input type="text" id="adNote" class="txt" maxlength="80" placeholder="For example: lower body and sprints">
-      <div class="actions"><button type="button" class="btn" id="adAdd">Add to selected plans</button><button type="button" class="btn alt" id="adClear">Remove all sessions for selected</button></div>
+      <div class="actions"><button type="button" class="btn" id="adAdd">Add to selected plans</button><button type="button" class="btn alt" id="adClear">Clear sessions from selected plans</button></div>
       <p class="plan-note" id="adMsg" role="status" hidden></p>
       <h4 style="margin:1.2rem 0 0">Sessions added</h4>
       <ul id="adList"></ul>
@@ -2028,6 +2071,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
 </main>
 
 <main id="view-checkout" hidden>
+  <a class="backlink" href="#app">← Back to my space</a>
   <div class="about-top">
     <p class="eyebrow">Plus</p>
     <h1 class="about-h1">Get Plus</h1>
@@ -2062,6 +2106,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
 </main>
 
 <main id="view-whatsnew" hidden>
+  <a class="backlink" href="#app">← Back to my space</a>
   <div class="about-top">
     <p class="eyebrow">What&rsquo;s new</p>
     <h1 class="about-h1">What&rsquo;s new in LectureLift</h1>
@@ -2089,6 +2134,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
 </main>
 
 <main id="view-install" hidden>
+  <a class="backlink" href="#app">← Back to my space</a>
   <div class="about-top">
     <p class="eyebrow">Get the app</p>
     <h1 class="about-h1">Get the LectureLift app</h1>
@@ -2144,6 +2190,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
 </main>
 
 <main id="view-safety" hidden>
+  <a class="backlink" href="#app">← Back to my space</a>
   <div class="about-top">
     <p class="eyebrow">Safety</p>
     <h1 class="about-h1">Health and safety</h1>
@@ -2185,6 +2232,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
 </main>
 
 <main id="view-faq" hidden>
+  <a class="backlink" href="#app">← Back to my space</a>
   <div class="about-top">
     <p class="eyebrow">FAQ</p>
     <h1 class="about-h1">Frequently asked questions</h1>
@@ -2293,6 +2341,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
 </main>
 
 <main id="view-exercises" hidden>
+  <a class="backlink" href="#app">← Back to my space</a>
   <div class="about-top">
     <p class="eyebrow">Library</p>
     <h1 class="about-h1">Exercise library</h1>
@@ -2315,6 +2364,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
 </main>
 
 <main id="view-plus" hidden>
+  <a class="backlink" href="#app">← Back to my space</a>
   <div class="about-top">
     <p class="eyebrow">Plus</p>
     <h1 class="about-h1">LectureLift Plus <span class="soon pub" id="plusSoon">Free preview</span></h1>
@@ -2671,6 +2721,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
 </main>
 
 <main id="view-pricing" hidden>
+  <a class="backlink" href="#app">← Back to my space</a>
   <div class="about-top">
     <p class="eyebrow">Pricing</p>
     <h1 class="about-h1">Pricing</h1>
@@ -3154,6 +3205,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
         (matchCount?', '+pl(matchCount,'hour')+' of match time':'')+
         ', and '+pl(free,'hour')+' of free time.';
 
+      var lhEl=document.getElementById('lecHint'); if(lhEl){ lhEl.hidden=lecCount>0; }
       var doneCount=all.filter(function(x){return done[x.key];}).length;
       document.getElementById('progress').textContent=all.length?(doneCount+' of '+all.length+' sessions done this week.'):'';
       save();
@@ -4092,6 +4144,10 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
     }
     function el2(tag,cls,txt){ var e=document.createElement(tag); if(cls){ e.className=cls; } if(txt!==undefined){ e.textContent=txt; } return e; }
     var appDay=null;
+    var DAYK='ll-day-v1';
+    function todayStr(){ var d=new Date(); return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); }
+    function loadDay(){ try{ var o=JSON.parse(localStorage.getItem(DAYK)||'null'); if(o && o.t===todayStr() && o.d>=0 && o.d<7){ return o.d; } }catch(eDay){} return null; }
+    function saveDay(){ try{ localStorage.setItem(DAYK,JSON.stringify({t:todayStr(),d:appDay})); }catch(eDay2){} }
     function renderMoves(){
       var box=$('appMoves'), pill=$('appMovesPill'); if(!box) return;
       var L=window.LLX?window.LLX.favs():[];
@@ -4110,7 +4166,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
     function renderApp(){
       var p=getProfile(), LL=window.LL; if(!p||!LL) return;
       var now=new Date(), hr=now.getHours(), g=hr<12?'Good morning':(hr<18?'Good afternoon':'Good evening');
-      var today=(now.getDay()+6)%7; if(appDay===null){ appDay=today; }
+      var today=(now.getDay()+6)%7; if(appDay===null){ appDay=today; } saveDay();
       $('appHello').textContent=g+', '+p.name;
       var ne=$('nameEdit'); if(ne && document.activeElement!==ne){ ne.value=p.name; }
       $('appDate').textContent=now.toLocaleDateString(undefined,{weekday:'long', day:'numeric', month:'long'});
@@ -4389,10 +4445,11 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
         });
         navEnd();
       }
-      if(cur==='app'){ appDay=null; var ce0=$('appCelebrate'); if(ce0){ ce0.hidden=true; } renderApp(); }
+      if(cur==='app'){ appDay=loadDay(); var ce0=$('appCelebrate'); if(ce0){ ce0.hidden=true; } renderApp(); }
       if(cur!=='home'){ window.scrollTo(0,0); }
       else if(h==='join'){ var j=document.getElementById('join'); if(j){ j.scrollIntoView(); } }
     }
+    window.LLApp=function(){ if(location.hash==='#app'){ renderApp(); } };
     window.addEventListener('hashchange',route);
     if(!location.hash && getProfile()){ location.replace('#app'); }
     route();
@@ -5120,7 +5177,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
     if (st && st.c === c) return Promise.resolve();
     status('Saving…');
     return A.push(d).then(function(r){ setSync(c, r.updatedAt); status('Saved to your account.'); })
-      .catch(function(){ status('Could not save just now. We will try again.'); });
+      .catch(function(){ status('We couldn\u2019t save just now. We will try again.'); });
   }
   function afterSignIn(){
     var s = A.session(); if (!s) return Promise.resolve();
@@ -5391,7 +5448,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
   if(sw){ sw.addEventListener('click',function(){
     var c=drawWeek(); if(!c){ say('Add your week first.'); return; }
     c.toBlob(function(b){
-      if(!b){ say('Could not make the picture.'); return; }
+      if(!b){ say('We couldn\u2019t make the picture. Please try again.'); return; }
       var f=null; try{ f=new File([b],'my-week-lecturelift.png',{type:'image/png'}); }catch(e){}
       if(f && navigator.canShare && navigator.canShare({files:[f]}) && navigator.share){
         navigator.share({files:[f],title:'My week',text:'My week, planned with LectureLift. '+URL}).catch(function(){});
@@ -5457,6 +5514,48 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
     if(e.key==='Enter'){ e.preventDefault(); var a=res.querySelector('a'); if(a){ go(a); } }
   });
   res.addEventListener('click',function(e){ var a=e.target.closest?e.target.closest('a'):null; if(a){ e.preventDefault(); go(a); } });
+})();
+</script>
+
+<script>
+(function(){
+  var $=function(i){ return document.getElementById(i); };
+  var box=$('llToast'), txt=$('llToastTxt'), btn=$('llToastBtn'), timer=null, act=null;
+  function hide(){ if(box){ box.hidden=true; } act=null; if(timer){ clearTimeout(timer); timer=null; } }
+  window.LLToast=function(msg,label,fn,ms){
+    if(!box) return; if(timer){ clearTimeout(timer); }
+    txt.textContent=msg; act=fn||null;
+    if(label && fn){ btn.textContent=label; btn.hidden=false; } else { btn.hidden=true; }
+    box.hidden=false; timer=setTimeout(hide,ms||(label?6000:2200));
+  };
+  if(btn){ btn.addEventListener('click',function(){ var f=act; hide(); if(f){ f(); } }); }
+  window.addEventListener('hashchange',hide);
+
+  // Undo after ticking a session off (dashboard and planner)
+  document.addEventListener('change',function(e){
+    var t=e.target; if(!t || !t.getAttribute || t.type!=='checkbox') return;
+    var k=t.getAttribute('data-key'); if(!k || !t.checked) return;
+    window.LLToast('Session ticked off','Undo',function(){
+      if(window.LL){ var it=window.LL.week().filter(function(x){ return x.key===k; })[0]; if(it && it.done){ window.LL.toggle(k); } }
+      var ce=$('appCelebrate'); if(ce){ ce.hidden=true; }
+      if(window.LLApp){ window.LLApp(); }
+    },6000);
+  },true);
+
+  // Saved messages
+  var sv=null;
+  function saved(msg){ if(sv){ clearTimeout(sv); } sv=setTimeout(function(){ if(box && (box.hidden || btn.hidden)){ window.LLToast(msg); } },700); }
+  var nf=$('nameForm'); if(nf){ nf.addEventListener('submit',function(){ var v=($('nameEdit').value||'').trim(); if(v){ setTimeout(function(){ window.LLToast('Name saved'); },80); } }); }
+  document.addEventListener('click',function(e){
+    var c=e.target.closest?e.target.closest('.sw'):null; if(c){ saved('Colour saved'); return; }
+    var h=$('view-home'); if(!h || h.hidden || !e.target.closest) return;
+    if(e.target.closest('button.c, .chip[data-mark], .chip[data-g], .chip[data-w]')){ saved('Saved'); }
+  });
+  document.addEventListener('change',function(e){
+    var h=$('view-home'); if(!h || h.hidden || !e.target || !e.target.closest || !h.contains(e.target)) return;
+    if(e.target.getAttribute && e.target.getAttribute('data-key')) return;
+    if(e.target.tagName==='SELECT' || (e.target.type==='checkbox' && !e.target.getAttribute('data-key'))){ saved('Saved'); }
+  });
 })();
 </script>
 </body>
