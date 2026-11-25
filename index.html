@@ -1252,6 +1252,20 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
 .acctdel summary{cursor:pointer; font-weight:600; color:var(--muted)}
 #view-plus-success .actions{margin-top:1.2rem}
 .cpres .cptop em{color:var(--ink)}
+
+.nudge{display:flex; align-items:center; gap:.8rem; flex-wrap:wrap; margin:0 0 1.25rem; padding:.85rem 1.1rem; border-radius:1.1rem; border:1px solid var(--line); background:var(--surface); color:var(--ink)}
+.nudge[hidden]{display:none}
+.nudge p{flex:1 1 14rem; margin:0; font-weight:600}
+.nudge p span{display:block; font-weight:400; color:var(--muted); font-size:.9rem}
+.nudge .btn,.nudge button{min-height:2.6rem}
+.nudge .nx{border:1px solid var(--line); background:transparent; color:var(--muted); border-radius:999px; padding:.45rem .9rem; font:inherit; font-size:.9rem; cursor:pointer}
+.wa{display:inline-flex; align-items:center; gap:.5rem; text-decoration:none}
+.sharecard .actions{display:flex; flex-wrap:wrap; gap:.6rem}
+.wnlist{list-style:none; margin:0 0 1.5rem; padding:0; display:grid; gap:.7rem}
+.wnlist li{padding:.8rem 1rem; border:1px solid var(--line); border-radius:1rem; background:var(--surface)}
+.wnlist strong{display:block}
+.wnlist span{color:var(--muted)}
+.wndate{font-size:.85rem; color:var(--muted); margin:0 0 .5rem}
 </style>
 </head>
 <body>
@@ -2031,6 +2045,30 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
   </div>
 </main>
 
+<main id="view-whatsnew" hidden>
+  <div class="about-top">
+    <p class="eyebrow">What&rsquo;s new</p>
+    <h1 class="about-h1">What&rsquo;s new in LectureLift</h1>
+    <p class="lede">A short list of what we have added lately. LectureLift is built by one student, and it gets better a little every week.</p>
+  </div>
+  <div class="inst">
+    <p class="wndate">25 November 2026</p>
+    <ul class="wnlist">
+      <li><strong>Share your week as a picture</strong><span>Tap Share my week on your dashboard to make an image of your plan. Send it to a mate or post it.</span></li>
+      <li><strong>Share LectureLift on WhatsApp</strong><span>One tap sends a friend a message and the link.</span></li>
+      <li><strong>Done this week</strong><span>Your dashboard now shows how many sessions you have finished out of the ones you planned.</span></li>
+      <li><strong>Add it to your home screen</strong><span>On a phone, a small reminder now offers to add LectureLift like an app. You can close it any time.</span></li>
+    </ul>
+    <p class="wndate">Earlier</p>
+    <ul class="wnlist">
+      <li><strong>Free accounts</strong><span>Log in on any device and your plan comes with you.</span></li>
+      <li><strong>Calendar file</strong><span>Download your sessions to add them to your calendar.</span></li>
+      <li><strong>165 exercises and new programmes</strong><span>Browse by muscle group and kit, with a how-to for every move.</span></li>
+    </ul>
+    <p><a class="btn ghost" href="#contact">Tell us what you would like next</a></p>
+  </div>
+</main>
+
 <main id="view-install" hidden>
   <div class="about-top">
     <p class="eyebrow">Get the app</p>
@@ -2363,6 +2401,12 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
 
   <div class="celebrate" id="appCelebrate" role="status" hidden></div>
 
+  <div class="nudge" id="instNudge" hidden>
+    <p>Add LectureLift to your home screen<span>It opens like an app, with no app store.</span></p>
+    <a class="btn" id="nudgeGo" href="#install">Show me how</a>
+    <button type="button" class="nx" id="nudgeX">Not now</button>
+  </div>
+
   <section class="pcard quizcard" id="quizCard" aria-labelledby="quizCardH" hidden>
     <h3 id="quizCardH">Build your starter plan in 20 seconds</h3>
     <p class="plan-sub">Answer three quick questions and LectureLift picks your training days and a ready-made programme.</p>
@@ -2382,7 +2426,8 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
         <div class="daystrip" id="appDays" role="group" aria-label="Choose a day"></div>
         <h4 class="dayhead" id="appDayHead"></h4>
         <ul class="plist" id="appDayList"></ul>
-        <div class="actions"><a class="btn ghost" href="#home">Edit my week</a></div>
+        <div class="actions"><a class="btn ghost" href="#home">Edit my week</a> <button type="button" class="btn ghost" id="shareWeekBtn">Share my week</button></div>
+        <p class="plan-note" id="shareWeekMsg" role="status" aria-live="polite"></p>
       </section>
       <section class="pcard" aria-labelledby="appBadgeH">
         <h3 id="appBadgeH">Milestones <span class="pill" id="appBadgePill"></span></h3>
@@ -2407,6 +2452,15 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
     </div>
   </div>
 
+  <section class="pcard sharecard" aria-labelledby="appShareH">
+    <h3 id="appShareH">Bring a mate</h3>
+    <p class="plan-note">Training is easier with someone. Send a friend the link.</p>
+    <div class="actions">
+      <a class="btn wa" id="waApp" href="https://wa.me/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 0 1-13.3 7.9L3 21l1.2-4.5A9 9 0 1 1 21 12z"/></svg>Share on WhatsApp<span class="vh"> (opens in a new tab)</span></a>
+      <a class="btn ghost" href="#mate">Plan with a mate</a>
+    </div>
+  </section>
+
   <section class="pcard" aria-labelledby="appGoH">
     <h3 id="appGoH">Shortcuts</h3>
     <div class="qlinks">
@@ -2416,6 +2470,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
       <a class="qlink" href="#plus"><strong>Plus</strong><span>Programmes, saved weeks, reminders</span></a>
       <a class="qlink" href="#checkout"><strong>Get Plus</strong><span>See how Plus works and what it costs</span></a>
       <a class="qlink" href="#start"><strong>Starter plan quiz</strong><span>Three questions, a plan built for you</span></a>
+      <a class="qlink" href="#whatsnew"><strong>What&rsquo;s new</strong><span>Latest updates to LectureLift</span></a>
       <a class="qlink instlink" href="#install"><strong>Get the app</strong><span>Add LectureLift to your home screen</span></a>
     </div>
   </section>
@@ -2675,6 +2730,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
         <div class="footacts">
           <button type="button" class="footact" id="shareBtn"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>Share LectureLift</button>
           <button type="button" class="footact" id="themeBtn" aria-pressed="false"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>Dark mode</button>
+          <a class="footact" id="waFoot" href="https://wa.me/" target="_blank" rel="noopener noreferrer" aria-label="Share LectureLift on WhatsApp (opens in a new tab)"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 0 1-13.3 7.9L3 21l1.2-4.5A9 9 0 1 1 21 12z"/></svg>WhatsApp</a>
         </div>
         <span class="vh" id="footMsg" role="status" aria-live="polite"></span>
       </div>
@@ -2694,6 +2750,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
         <h4>Company</h4>
         <a class="pub" href="#about">About</a>
         <a class="pub" href="#faq">FAQ</a>
+        <a href="#whatsnew">What&rsquo;s new</a>
         <a href="#contact">Contact</a>
       </div>
       <div class="fcol" role="group" aria-label="Legal">
@@ -3921,7 +3978,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
 <script>
   // Simple page switching: #home (default) and #about
   (function(){
-    var views=['home','mate','exercises','tips','about','faq','plus','pricing','login','app','privacy','terms','safety','contact','install','start','checkout','club','plus-success'];
+    var views=['home','mate','exercises','tips','about','faq','plus','pricing','login','app','privacy','terms','safety','contact','install','start','checkout','club','plus-success','whatsnew'];
     var links=document.querySelectorAll('header a[data-view]');
     function navEnd(){
       var n=document.querySelector('header nav');
@@ -4080,7 +4137,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
         flame:'<path d="M12 3c1 3 5 5 5 10a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 1-9z"/>',
         cal:'<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/>'
       };
-      [['check',st.sessions,st.sessions===1?'session completed':'sessions completed'],['clock',st.time,'total training time'],['flame',st.streak,'week streak'],['cal',wk.length,'planned this week']].forEach(function(r,i){
+      [['check',st.sessions,st.sessions===1?'session completed':'sessions completed'],['clock',st.time,'total training time'],['flame',st.streak,'week streak'],['check',st.done+' of '+st.planned,'done this week']].forEach(function(r,i){
         var li=el2('li','t'+i);
         var ic=el2('span','ico'); ic.innerHTML='<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+ICO[r[0]]+'</svg>';
         var tx=el2('div'); tx.appendChild(el2('strong',null,String(r[1]))); tx.appendChild(el2('span',null,r[2]));
@@ -4242,7 +4299,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
       if((h==='login'||h==='signup') && prof && !window.LLUpgrade){ location.replace('#app'); return; }
       var cur=(views.indexOf(h)>-1)?h:'home', navKey=cur;
       if(h==='signup'){ cur='login'; navKey='signup'; }
-      var TITLES={home:'LectureLift: gym plans that fit around your lectures', mate:'Train with a mate', exercises:'Exercise library', tips:'Training tips', about:'About', faq:'FAQ', plus:'Plus', pricing:'Pricing', login:(h==='signup'?'Sign up':'Log in'), app:'My space', privacy:'Privacy policy', terms:'Terms of use', safety:'Health and safety', contact:'Contact', install:'Get the app', start:'Starter plan quiz', checkout:'Get Plus', 'plus-success':'Payment', club:'Club mode'};
+      var TITLES={home:'LectureLift: gym plans that fit around your lectures', mate:'Train with a mate', exercises:'Exercise library', tips:'Training tips', about:'About', faq:'FAQ', plus:'Plus', pricing:'Pricing', login:(h==='signup'?'Sign up':'Log in'), app:'My space', privacy:'Privacy policy', terms:'Terms of use', safety:'Health and safety', contact:'Contact', install:'Get the app', start:'Starter plan quiz', checkout:'Get Plus', 'plus-success':'Payment', club:'Club mode', whatsnew:'What\u2019s new'};
       document.title=(cur==='home')?TITLES.home:(TITLES[cur]+' \u00b7 LectureLift');
       var tabs=document.querySelectorAll('.chip[data-tab]');
       var wantTab=(h==='signup')?'signup':'login';
@@ -5219,6 +5276,79 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
   // ---------- start ----------
   panels(); paintAcct();
   if (!authHash()){ startupSync(); if (live && A.session()) P.refresh(); runSuccess(); }
+})();
+</script>
+
+<script>
+(function(){
+  var $=function(i){ return document.getElementById(i); };
+  var MSG='I have been using LectureLift, a free planner that fits gym and running around your lectures. Have a look:';
+  var URL='https://lecturelift.co.uk/';
+  var wa='https://wa.me/?text='+encodeURIComponent(MSG+' '+URL);
+  ['waApp','waFoot'].forEach(function(id){ var a=$(id); if(a){ a.setAttribute('href',wa); } });
+
+  // Share my week as a picture
+  function drawWeek(){
+    var LL=window.LL; if(!LL) return null;
+    var wk=LL.week(), W=1080, H=1350, c=document.createElement('canvas'); c.width=W; c.height=H;
+    var x=c.getContext('2d'), F='Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
+    var g=x.createLinearGradient(0,0,W,H); g.addColorStop(0,'#5b7bf5'); g.addColorStop(.45,'#4868ee'); g.addColorStop(1,'#3a55d8'); x.fillStyle=g; x.fillRect(0,0,W,H);
+    function rr(px,py,w,h,r){ x.beginPath(); x.moveTo(px+r,py); x.arcTo(px+w,py,px+w,py+h,r); x.arcTo(px+w,py+h,px,py+h,r); x.arcTo(px,py+h,px,py,r); x.arcTo(px,py,px+w,py,r); x.closePath(); }
+    x.textBaseline='alphabetic';
+    x.fillStyle='#fff'; x.font='800 46px '+F; x.fillText('LectureLift',90,128);
+    x.font='800 96px '+F; x.fillText('My week',90,260);
+    var rowH=118, top=330;
+    LL.days.forEach(function(dn,di){
+      var y=top+di*(rowH+8), items=wk.filter(function(i){ return i.d===di; });
+      x.fillStyle='rgba(31,42,74,.92)'; rr(90,y,900,rowH,24); x.fill();
+      x.fillStyle='#9db1ff'; x.font='800 34px '+F; x.fillText(dn,122,y+72);
+      if(!items.length){ x.fillStyle='rgba(255,255,255,.45)'; x.font='600 30px '+F; x.fillText('Rest day',270,y+70); return; }
+      var cx=270;
+      items.slice(0,3).forEach(function(it){
+        var label=(it.time?it.time+'  ':'')+(it.run?'Run':'Gym');
+        x.font='800 28px '+F; var w=Math.min(x.measureText(label).width+44,330);
+        x.fillStyle=it.run?'#9db1ff':'#ffffff'; rr(cx,y+26,w,66,18); x.fill();
+        x.fillStyle=it.run?'#1f2a4a':'#4868ee'; x.fillText(label,cx+22,y+70);
+        cx+=w+12;
+      });
+    });
+    x.fillStyle='#fff'; x.font='800 34px '+F; x.fillText('Free student planner',90,H-92);
+    x.font='500 34px '+F; x.textAlign='right'; x.fillText('lecturelift.co.uk',990,H-92); x.textAlign='left';
+    return c;
+  }
+  var sw=$('shareWeekBtn'), sm=$('shareWeekMsg');
+  function say(t){ if(sm){ sm.textContent=''; setTimeout(function(){ sm.textContent=t; },30); } }
+  if(sw){ sw.addEventListener('click',function(){
+    var c=drawWeek(); if(!c){ say('Add your week first.'); return; }
+    c.toBlob(function(b){
+      if(!b){ say('Could not make the picture.'); return; }
+      var f=null; try{ f=new File([b],'my-week-lecturelift.png',{type:'image/png'}); }catch(e){}
+      if(f && navigator.canShare && navigator.canShare({files:[f]}) && navigator.share){
+        navigator.share({files:[f],title:'My week',text:'My week, planned with LectureLift. '+URL}).catch(function(){});
+        return;
+      }
+      var u=URL_.createObjectURL(b), a=document.createElement('a'); a.href=u; a.download='my-week-lecturelift.png'; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(function(){ URL_.revokeObjectURL(u); },4000); say('Picture saved to your downloads.');
+    },'image/png');
+  }); }
+  var URL_=window.URL||window.webkitURL;
+
+  // Add to home screen nudge (dashboard only, phones, once in a while)
+  var NK='ll-nudge-v1', nudge=$('instNudge'), deferred=null;
+  window.addEventListener('beforeinstallprompt',function(e){ deferred=e; });
+  function standalone(){ return (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone===true; }
+  function snoozed(){ try{ var t=parseInt(localStorage.getItem(NK)||'0',10); return t && Date.now()-t<30*864e5; }catch(e){ return false; } }
+  function paint(){
+    if(!nudge) return;
+    var phone=window.matchMedia && matchMedia('(max-width: 820px)').matches;
+    nudge.hidden=!(location.hash==='#app' && phone && !standalone() && !snoozed());
+  }
+  window.addEventListener('hashchange',paint); paint();
+  var nx=$('nudgeX'); if(nx){ nx.addEventListener('click',function(){ try{ localStorage.setItem(NK,String(Date.now())); }catch(e){} nudge.hidden=true; }); }
+  var ng=$('nudgeGo'); if(ng){ ng.addEventListener('click',function(e){
+    if(deferred){ e.preventDefault(); deferred.prompt(); deferred.userChoice.then(function(){ deferred=null; nudge.hidden=true; }).catch(function(){}); }
+  }); }
+  window.addEventListener('appinstalled',function(){ if(nudge){ nudge.hidden=true; } });
 })();
 </script>
 </body>
