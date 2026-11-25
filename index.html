@@ -1261,6 +1261,18 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
 .nudge .nx{border:1px solid var(--line); background:transparent; color:var(--muted); border-radius:999px; padding:.45rem .9rem; font:inherit; font-size:.9rem; cursor:pointer}
 .wa{display:inline-flex; align-items:center; gap:.5rem; text-decoration:none}
 .sharecard .actions{display:flex; flex-wrap:wrap; gap:.6rem}
+.ah-tip{margin:.7rem 0 0; font-size:.92rem; opacity:.9; max-width:34rem}
+.ah-tip:empty{display:none}
+.mvbtn{margin:.1rem 0 .2rem 2.1rem; padding:.3rem .8rem; min-height:2.2rem; border:1px solid var(--line); border-radius:999px; background:var(--surface); color:var(--muted); font:inherit; font-size:.85rem; font-weight:600; cursor:pointer}
+.welcomelist{margin:.4rem 0 1rem; padding-left:1.2rem; display:grid; gap:.35rem}
+.welcome{border-color:color-mix(in srgb, var(--accent) 45%, var(--line))}
+.dsearch{position:relative; margin:0 0 1rem}
+.dsearch input{width:100%; font:inherit; font-size:1rem; padding:.8rem 1rem; min-height:2.9rem; border:1px solid var(--line); border-radius:999px; background:var(--surface); color:var(--ink)}
+.dsres{list-style:none; margin:.4rem 0 0; padding:.35rem; border:1px solid var(--line); border-radius:1rem; background:var(--surface); box-shadow:0 10px 30px rgba(31,42,74,.12); display:grid; gap:.1rem}
+.dsres[hidden]{display:none}
+.dsres a{display:flex; justify-content:space-between; gap:.8rem; padding:.65rem .8rem; border-radius:.7rem; text-decoration:none; color:var(--ink); min-height:2.6rem; align-items:center}
+.dsres a:hover,.dsres a:focus{background:color-mix(in srgb, var(--accent) 10%, var(--surface))}
+.dsres small{color:var(--muted); white-space:nowrap}
 .quickbar{display:flex; flex-wrap:wrap; gap:.6rem; margin:0 0 1rem}
 .quickbar .btn{display:inline-flex; align-items:center; gap:.5rem; min-height:2.8rem}
 .qbmsg{margin:-.4rem 0 1rem}
@@ -2058,6 +2070,9 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
   <div class="inst">
     <p class="wndate">25 November 2026</p>
     <ul class="wnlist">
+      <li><strong>Move a session</strong><span>Lecture ran late? Tap Move on a session and it goes to the next free gap that day.</span></li>
+      <li><strong>Search your dashboard</strong><span>Type a move or a page name and jump straight to it.</span></li>
+      <li><strong>A welcome and a tip a day</strong><span>New users get a short welcome, and the dashboard shows a training tip each day.</span></li>
       <li><strong>Share your week as a picture</strong><span>Tap Share my week on your dashboard to make an image of your plan. Send it to a mate or post it.</span></li>
       <li><strong>Share LectureLift on WhatsApp</strong><span>One tap sends a friend a message and the link.</span></li>
       <li><strong>Done this week</strong><span>Your dashboard now shows how many sessions you have finished out of the ones you planned.</span></li>
@@ -2398,6 +2413,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
       <p class="ah-date" id="appDate"></p>
       <h1 id="appHello">Welcome</h1>
       <p class="ah-sub" id="appMotto"></p>
+      <p class="ah-tip" id="appTip"></p>
       <div class="ah-next" id="appNext"></div>
     </div>
     <div class="ah-ring" id="appRing"></div>
@@ -2405,12 +2421,29 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
 
   <div class="celebrate" id="appCelebrate" role="status" hidden></div>
 
+  <section class="pcard welcome" id="appWelcome" aria-labelledby="appWelH" hidden>
+    <h3 id="appWelH">Welcome to LectureLift</h3>
+    <p class="plan-note" id="appWelText"></p>
+    <ul class="welcomelist">
+      <li>Tick a session off when you finish it.</li>
+      <li>Lecture ran late? Tap <strong>Move</strong> on a session to find another gap that day.</li>
+      <li>Send your week to a mate with <strong>Share my week</strong>.</li>
+    </ul>
+    <div class="actions"><a class="btn" id="appWelGo" href="#home">Open my planner</a> <button type="button" class="btn ghost" id="appWelX">Got it</button></div>
+  </section>
+
   <div class="quickbar" role="group" aria-label="Share and updates">
     <button type="button" class="btn" id="shareWeekBtn"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>Share my week</button>
     <a class="btn wa" id="waApp" href="https://wa.me/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 0 1-13.3 7.9L3 21l1.2-4.5A9 9 0 1 1 21 12z"/></svg>Tell a mate<span class="vh"> (opens in a new tab)</span></a>
     <a class="btn ghost" href="#whatsnew">What&rsquo;s new</a>
   </div>
   <p class="plan-note qbmsg" id="shareWeekMsg" role="status" aria-live="polite"></p>
+
+  <div class="dsearch">
+    <label class="vh" for="dsQ">Search moves and pages</label>
+    <input type="search" id="dsQ" placeholder="Search moves and pages, for example squat" autocomplete="off" enterkeyhint="search">
+    <ul class="dsres" id="dsRes" hidden></ul>
+  </div>
 
   <div class="nudge" id="instNudge" hidden>
     <p>Add LectureLift to your home screen<span>It opens like an app, with no app store.</span></p>
@@ -2437,7 +2470,8 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
         <div class="daystrip" id="appDays" role="group" aria-label="Choose a day"></div>
         <h4 class="dayhead" id="appDayHead"></h4>
         <ul class="plist" id="appDayList"></ul>
-        <div class="actions"><a class="btn ghost" href="#home">Edit my week</a></div>
+        <p class="plan-note" id="appMoveMsg" role="status" aria-live="polite"></p>
+        <div class="actions"><a class="btn ghost" href="#home">Edit my week</a> <button type="button" class="btn ghost" id="appMoveReset" hidden>Put sessions back</button></div>
       </section>
       <section class="pcard" aria-labelledby="appBadgeH">
         <h3 id="appBadgeH">Milestones <span class="pill" id="appBadgePill"></span></h3>
@@ -2967,6 +3001,9 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
     }
 
     // Place gym sessions and runs in free slots, with optional rest-day rules
+    var skips={g:{},r:{}};
+    try{ var sk0=JSON.parse(localStorage.getItem('ll-skips-v1')||'null'); if(sk0 && sk0.g && sk0.r){ skips=sk0; } }catch(eSk){}
+    function saveSkips(){ try{ localStorage.setItem('ll-skips-v1',JSON.stringify(skips)); }catch(eSk2){} }
     function place(){
       var blank=function(){return lect.map(function(d){return d.map(function(){return 0;});});};
       var gym=blank(), run=blank(), chosen=[], runs=[], missed=[], missedRuns=[], rested=[], recovery={};
@@ -2990,13 +3027,13 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
           if(smart && gymStreak>=2){
             rested.push({d:di, why:'rest day after two gym days in a row'});
           } else {
-            order().some(function(k){ if(row[k]===0){s=k; return true;} return false; });
+            order().some(function(k){ if(row[k]===0 && !skips.g[di+':'+k]){s=k; return true;} return false; });
             if(s>-1){ gym[di][s]=1; chosen.push([di,s]); gymPlaced=true; } else { missed.push(di); }
           }
         }
         gymStreak=gymPlaced?gymStreak+1:0;
         if(wantRun){
-          order().some(function(k){ if(row[k]===0 && !gym[di][k]){r=k; return true;} return false; });
+          order().some(function(k){ if(row[k]===0 && !gym[di][k] && !skips.r[di+':'+k]){r=k; return true;} return false; });
           if(r>-1){ run[di][r]=1; runs.push([di,r]); } else { missedRuns.push(di); }
         }
       });
@@ -3910,6 +3947,17 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
       week:function(){
         return buildItems(place()).map(function(x){ return {key:x.key, d:x.d, time:times[x.s], run:x.run, txt:x.txt, detail:x.detail, done:!!done[x.key]}; });
       },
+      move:function(key){
+        var m=/^(\d):(\d+):([gr])$/.exec(String(key)); if(!m){ return false; }
+        var t=m[3], k=m[1]+':'+m[2], before=place();
+        skips[t][k]=true;
+        var after=place();
+        var lost=(t==='g')?(after.missed.length>before.missed.length):(after.missedRuns.length>before.missedRuns.length);
+        if(lost){ delete skips[t][k]; return false; }
+        saveSkips(); render(); save(); return true;
+      },
+      movedCount:function(){ return Object.keys(skips.g).length+Object.keys(skips.r).length; },
+      resetMoves:function(){ skips={g:{},r:{}}; saveSkips(); render(); save(); },
       summary:function(){
         var cnt=function(a){ return a.filter(function(v){return v;}).length; };
         var lec=0; lect.forEach(function(r){ r.forEach(function(v){ if(v){ lec++; } }); });
@@ -3923,11 +3971,12 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
       },
       detailHtml:function(l){ return detailHtml(l); },
       isSample:function(){ return JSON.stringify(lect)===sampleLect; },
-      blank:function(){ lect=emptyWeek(); done={}; render(); },
+      blank:function(){ lect=emptyWeek(); done={}; skips={g:{},r:{}}; saveSkips(); render(); },
       setup:function(o){
         var t=[false,false,false,false,false,false,false], r=[false,false,false,false,false,false,false];
         (o.gym||[]).forEach(function(d){ t[d]=true; });
         (o.run||[]).forEach(function(d){ r[d]=true; });
+        skips={g:{},r:{}}; saveSkips();
         goal=o.goal; train=t; runDays=r; sport=o.sport||'general';
         gymProg=(o.gymProg && progs.gym[o.gymProg])?o.gymProg:'none';
         runProg=(o.runProg && progs.run[o.runProg])?o.runProg:'none';
@@ -4100,6 +4149,18 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
       ring.setAttribute('role','img'); ring.setAttribute('aria-label',st.done+' of '+st.planned+' sessions done this week');
       ring.innerHTML='<svg viewBox="0 0 100 100" width="132" height="132" aria-hidden="true"><circle cx="50" cy="50" r="42" fill="none" stroke="currentColor" stroke-opacity=".22" stroke-width="9"/><circle cx="50" cy="50" r="42" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round" stroke-dasharray="'+C.toFixed(1)+'" stroke-dashoffset="'+off.toFixed(1)+'" transform="rotate(-90 50 50)"/></svg><div class="ring-in"><strong>'+st.done+'/'+st.planned+'</strong><span>this week</span></div>';
 
+      // welcome card (first visit, before any session is done)
+      (function(){
+        var w=$('appWelcome'); if(!w) return;
+        var seen=false; try{ seen=!!localStorage.getItem('ll-welcome-v1'); }catch(eW){ seen=!!window.__llWel; }
+        var show=!seen && st.sessions===0; w.hidden=!show; if(!show) return;
+        var wt=$('appWelText'), wg=$('appWelGo'), full0=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+        if(nx){ wt.textContent='Your first session is '+(nx.d===today?'today':full0[nx.d])+' at '+nx.time+': '+nx.txt+'.'; wg.textContent='View session'; wg.setAttribute('href','#app'); wg.setAttribute('data-goto',String(nx.d)); }
+        else { wt.textContent='Add your lectures and we will find the gaps for your training.'; wg.textContent='Open my planner'; wg.setAttribute('href','#home'); wg.removeAttribute('data-goto'); }
+      })();
+      var mr=$('appMoveReset'); if(mr){ mr.hidden=!(LL.movedCount && LL.movedCount()>0); }
+      var mm=$('appMoveMsg'); if(mm){ mm.textContent=window.__llMoveMsg||''; window.__llMoveMsg=''; }
+
       // day strip
       var strip=$('appDays'); strip.textContent='';
       LL.days.forEach(function(dn,di){
@@ -4117,6 +4178,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
         cb.type='checkbox'; cb.checked=x.done; cb.setAttribute('data-key',x.key);
         var sp=el2('span'); sp.appendChild(el2('strong',null,x.time)); sp.appendChild(document.createTextNode(' '+x.txt));
         lab.appendChild(cb); lab.appendChild(document.createTextNode(' ')); lab.appendChild(sp); li.appendChild(lab);
+        if(!x.done){ var mv=el2('button','mvbtn','Move'); mv.type='button'; mv.setAttribute('data-move',x.key); mv.setAttribute('aria-label','Move '+x.txt+' to another free time'); li.appendChild(mv); }
         if(x.detail){
           var d=el2('details','det'); d.appendChild(el2('summary',null,'See the session'));
           var ul=el2('ul'); ul.innerHTML=LL.detailHtml(x.detail); d.appendChild(ul); li.appendChild(d);
@@ -4200,8 +4262,14 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
       if(b){ appDay=+b.getAttribute('data-day'); renderApp(); }
       var sw=e.target.closest?e.target.closest('.sw'):null;
       if(sw){ setAccent(sw.getAttribute('data-accent')); applyAccent(true); renderApp(); }
-      var g=e.target.closest?e.target.closest('.ah-btn'):null;
-      if(g){ appDay=+g.getAttribute('data-goto'); renderApp(); var t=$('appWeekH'); if(t&&t.scrollIntoView){ try{ t.scrollIntoView({behavior:'smooth',block:'start'}); }catch(err){ t.scrollIntoView(); } } }
+      var mvb=e.target.closest?e.target.closest('.mvbtn'):null;
+      if(mvb){ var okm=window.LL.move(mvb.getAttribute('data-move')); window.__llMoveMsg=okm?'Moved to the next free gap that day.':'No other free gap that day, so it stays where it is.'; renderApp(); }
+      var mrb=e.target.closest?e.target.closest('#appMoveReset'):null;
+      if(mrb){ window.LL.resetMoves(); window.__llMoveMsg='Sessions put back where they were.'; renderApp(); }
+      var wx=e.target.closest?e.target.closest('#appWelX'):null;
+      if(wx){ try{ localStorage.setItem('ll-welcome-v1','1'); }catch(eW2){ window.__llWel=1; } renderApp(); }
+      var g=e.target.closest?e.target.closest('[data-goto]'):null;
+      if(g){ if(g.id==='appWelGo'){ e.preventDefault(); try{ localStorage.setItem('ll-welcome-v1','1'); }catch(eW3){ window.__llWel=1; } } appDay=+g.getAttribute('data-goto'); renderApp(); var t=$('appWeekH'); if(t&&t.scrollIntoView){ try{ t.scrollIntoView({behavior:'smooth',block:'start'}); }catch(err){ t.scrollIntoView(); } } }
     }); }
     var brand=document.querySelector('.brand');
     if(brand){ brand.addEventListener('click',function(e){ if(getProfile()){ e.preventDefault(); if(location.hash==='#app'){ window.scrollTo(0,0); } else { location.hash='#app'; } } }); }
@@ -4557,6 +4625,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
   function favCount(){ return Object.keys(favs).filter(function(n){ return list.some(function(x){return x.n===n;}); }).length; }
   loadFavs();
   window.LLX={
+    names:function(){ return list.map(function(x){ return {n:x.n,g:x.g}; }); },
     favs:function(){ return list.filter(function(x){return favs[x.n];}).map(function(x){ return {n:x.n,g:x.g,eq:x.eq,cue:x.cue,swap:x.swap}; }); },
     toggle:function(n){ if(favs[n]){ delete favs[n]; } else { favs[n]=true; } saveFavs(); window.dispatchEvent(new Event('ll-favs')); }
   };
@@ -5350,6 +5419,44 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
     if(deferred){ e.preventDefault(); deferred.prompt(); deferred.userChoice.then(function(){ deferred=null; nudge.hidden=true; }).catch(function(){}); }
   }); }
   window.addEventListener('appinstalled',function(){ if(nudge){ nudge.hidden=true; } });
+})();
+</script>
+
+<script>
+(function(){
+  var $=function(i){ return document.getElementById(i); };
+  var TIPS=['Sleep is part of training. A regular bedtime helps most in exam weeks.','Warm up for five minutes before you lift.','A short session you do beats a long one you skip.','Drink water through the day, not just in the gym.','Lecture at 9? Pack your gym bag the night before.','Add weight slowly. Small steps add up.','Rest days are when your body adapts. Enjoy them.','Walking between lectures counts too.','Good form first, heavier weights later.','Plan your week on Sunday and it feels lighter.','Eat something with protein after you train.','Training with a mate means you both show up more.','Stuck? Do the next session, not the whole week.','Stretch for a few minutes after a run.','Use the stairs when you can.','Write down what you lifted so you can beat it next time.','If a machine is taken, swap the move. Every move has a swap.','Breathe out on the hard part of the lift.','Eat breakfast before an early session.','Consistency beats intensity. Keep turning up.'];
+  var t=$('appTip'); if(t){ var d=new Date(), n=Math.floor((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-Date.UTC(d.getFullYear(),0,0))/864e5); t.textContent='Tip: '+TIPS[n%TIPS.length]; }
+
+  var PAGES=[['My planner','#home','lectures goals days week edit timetable'],['Exercise library','#exercises','moves exercises library gym'],['With a mate','#mate','friend partner together buddy'],['Training tips','#tips','tips advice help'],['Starter plan quiz','#start','quiz programme beginner starter'],['Plus','#plus','programmes saved weeks reminders'],['Get Plus','#checkout','upgrade plus'],['Get the app','#install','install home screen phone app'],['What’s new','#whatsnew','updates new latest'],['FAQ','#faq','questions help answers'],['Contact','#contact','email help feedback message'],['Club mode','#club','team captain squad club'],['Health and safety','#safety','safety injury health'],['Privacy policy','#privacy','data privacy'],['Terms of use','#terms','terms legal']];
+  var q=$('dsQ'), res=$('dsRes'); if(!q||!res) return;
+  function esc(x){ return String(x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function find(v){
+    v=v.trim().toLowerCase(); if(!v) return [];
+    var out=[];
+    PAGES.forEach(function(p){ if((p[0]+' '+p[2]).toLowerCase().indexOf(v)>-1){ out.push({t:p[0],h:p[1],k:'Page'}); } });
+    var ms=[]; try{ ms=(window.LLX&&window.LLX.names)?window.LLX.names():[]; }catch(e){}
+    var c=0; ms.forEach(function(m){ if(c<5 && m.n.toLowerCase().indexOf(v)>-1){ out.push({t:m.n,h:'#exercises',k:m.g||'Move',q:m.n}); c++; } });
+    return out.slice(0,8);
+  }
+  function show(){
+    var v=q.value, r=find(v);
+    if(!v.trim()){ res.hidden=true; res.innerHTML=''; return; }
+    res.hidden=false;
+    res.innerHTML=r.length?r.map(function(x,i){ return '<li><a href="'+x.h+'" data-q="'+esc(x.q||'')+'">'+esc(x.t)+'<small>'+esc(x.k)+'</small></a></li>'; }).join(''):'<li><a href="#exercises" data-q="'+esc(v.trim())+'">Search the exercise library for “'+esc(v.trim())+'”<small>Library</small></a></li>';
+  }
+  function go(a){
+    var term=a.getAttribute('data-q')||'', h=a.getAttribute('href');
+    q.value=''; res.hidden=true; res.innerHTML='';
+    if(location.hash!==h){ location.hash=h; }
+    setTimeout(function(){ var s=$('exSearch'); if(s && h==='#exercises'){ s.value=term; s.dispatchEvent(new Event('input',{bubbles:true})); } },60);
+  }
+  q.addEventListener('input',show);
+  q.addEventListener('keydown',function(e){
+    if(e.key==='Escape'){ q.value=''; show(); }
+    if(e.key==='Enter'){ e.preventDefault(); var a=res.querySelector('a'); if(a){ go(a); } }
+  });
+  res.addEventListener('click',function(e){ var a=e.target.closest?e.target.closest('a'):null; if(a){ e.preventDefault(); go(a); } });
 })();
 </script>
 </body>
