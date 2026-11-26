@@ -385,7 +385,15 @@ details.adsec .adbody>h4:first-child{margin-top:0}
 .posgrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(8.5rem,1fr)); gap:.5rem}
 .posgrid label{display:grid; gap:.15rem; font-size:.85rem; font-weight:600}
 .posgrid select{width:100%}
-#clubCoach .grpnote{font-weight:600; margin:.4rem 0 0}
+#clubCoach .grpnote{display:inline-block; font-weight:600; margin:.5rem 0 0; padding:.3rem .8rem; border:1px solid var(--line); border-radius:2rem; background:var(--bg); font-size:.85rem}
+.cstats{display:grid; grid-template-columns:repeat(3,1fr); gap:.5rem; margin:.8rem 0}
+.cstats div{border:1px solid var(--line); border-radius:.8rem; padding:.6rem .4rem; background:var(--bg); text-align:center}
+.cstats strong{display:block; font-size:1.4rem; line-height:1.2}
+.cstats span{font-size:.78rem; color:var(--muted)}
+#mbMsg.callout{color:var(--ink); padding:.7rem .9rem; border-left:4px solid var(--accent); background:var(--bg); border-radius:.6rem}
+#clubCoach li.isdone label span{color:var(--muted); text-decoration:line-through}
+.tryrow .btn{width:100%; justify-content:center; text-align:center}
+.clubdemo strong.role{min-width:3.4rem}
 .clubdemo ul{list-style:none; margin:0; padding:0; display:grid; gap:.5rem; font-size:.9rem}
 .clubdemo li{display:flex; flex-wrap:wrap; gap:.2rem .6rem; align-items:center}
 .clubdemo .sw{width:.9rem; height:.9rem; border-radius:50%; flex:none; border:1px solid var(--line)}
@@ -399,8 +407,8 @@ details.adsec .adbody>h4:first-child{margin-top:0}
 #clubAdmin h4,#clubCoach h4{margin:1.4rem 0 .2rem}
 #clubAdmin ol.board,#clubCoach ol.board{list-style:none; margin:.6rem 0 0; padding:0; display:grid; gap:.4rem}
 #clubAdmin ol.board li,#clubCoach ol.board li{counter-increment:b}
-.bar{display:block; width:100%; height:.5rem; border-radius:1rem; background:var(--line); overflow:hidden; margin-top:.3rem}
-.bar i{display:block; height:100%; background:var(--accent); border-radius:1rem}
+.cbar{display:block; width:100%; height:.5rem; border-radius:1rem; background:var(--line); overflow:hidden; margin-top:.3rem}
+.cbar i{display:block; height:100%; background:var(--accent); border-radius:1rem}
 #clubCoach label.tickrow{display:flex; gap:.5rem; align-items:center; margin:0; font-weight:500; cursor:pointer}
 @media (max-width:700px){
   select,.per select{min-height:2.6rem}
@@ -2017,7 +2025,8 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
       </form>
       <div class="tryrow" id="clTryRow">
         <button type="button" class="btn" id="clTry">Try the coach demo in one tap</button>
-        <p class="plan-note">Logs you in as the demo club&rsquo;s coach and fills in an example squad, so you can see it working straight away. Nothing leaves your device.</p>
+        <button type="button" class="btn alt" id="clTryP">Or see it as a player</button>
+        <p class="plan-note">Fills in an example squad so you can see it working straight away. Coaches plan the week and players tick sessions off. Nothing leaves your device.</p>
       </div>
       <div class="clubdemo">
         <h4>Demo club for this preview</h4>
@@ -2045,6 +2054,8 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
       <h3>Coach admin</h3>
       <p class="plan-sub">Plan the squad&rsquo;s week in a few taps. In this preview the squad is made up and everything is saved on this device only.</p>
       <p class="plan-note adtoast" id="adMsg" role="status" hidden></p>
+      <div class="cstats" id="adStats" aria-label="Squad summary"></div>
+      <div class="btnrow"><button type="button" class="chip" id="adToggleAll">Close all sections</button></div>
 
       <details class="adsec" open>
         <summary>1. Squad and positions</summary>
@@ -2107,7 +2118,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
         <summary id="adSessSum">4. Sessions added</summary>
         <div class="adbody">
           <ul id="adList"></ul>
-          <p class="plan-note" id="adEmpty">Nothing added yet.</p>
+          <p class="plan-note" id="adEmpty">Nothing added yet. Use step 3, or load example data in step 8.</p>
         </div>
       </details>
 
@@ -2172,9 +2183,10 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
     <div class="pcard" id="clubCoach" hidden>
       <h3>From your coach</h3>
       <p class="plan-sub">Sessions your coach has added to your plan.</p>
-      <p class="plan-note" id="mbMsg" hidden style="font-weight:600"></p>
-      <label class="per">I am <select id="mbPlayer"></select></label>
+      <p class="plan-note callout" id="mbMsg" hidden style="font-weight:600"></p>
+      <label class="per">Showing the plan for <select id="mbPlayer"></select></label>
       <p class="grpnote" id="mbPos" hidden></p>
+      <div id="mbProg" hidden><p class="plan-note" id="mbProgTxt" style="margin:.8rem 0 0; font-weight:600"></p><span class="cbar"><i id="mbProgBar"></i></span></div>
       <ul id="mbList"></ul>
       <p class="plan-note" id="mbEmpty">Nothing from your coach yet.</p>
       <h4>Match days</h4>
@@ -2232,6 +2244,8 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
   <div class="inst">
     <p class="wndate">26 November 2026</p>
     <ul class="wnlist">
+      <li><strong>Club mode: see it as a player</strong><span>A second one-tap demo shows what a player sees: their sessions, a progress bar, the coach&rsquo;s message and their position.</span></li>
+      <li><strong>Club mode: easier for coaches</strong><span>A summary strip, open-all and close-all for the sections, Enter to add, and a second tap to confirm before anything is cleared.</span></li>
       <li><strong>Club mode: positions</strong><span>Pick a sport, give each player a position group, select a whole group in one tap, and add a session made for each position.</span></li>
       <li><strong>Club mode: free-time grid by group</strong><span>See when the whole squad, one position group or just your selected players are free. You can also add your own planner timetable, kept on your device.</span></li>
       <li><strong>Club mode: easier coach page</strong><span>The coach page is now in sections that open and close, with a message that stays in view while you work.</span></li>
@@ -5109,7 +5123,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
     SQUAD.forEach(function(n){ var items=plans[n]||[], d=items.filter(function(x){return x.done;}).length, t=items.length;
       var li=document.createElement('li'); li.style.display='block'; var top=document.createElement('div'); top.style.cssText='display:flex; justify-content:space-between; gap:.5rem';
       var a=document.createElement('span'); a.textContent=n; var b=document.createElement('strong'); b.textContent=t?(d+' of '+t+' done'):'No sessions set'; top.appendChild(a); top.appendChild(b); li.appendChild(top);
-      var bar=document.createElement('span'); bar.className='bar'; var i=document.createElement('i'); i.style.width=(t?Math.round(d/t*100):0)+'%'; bar.appendChild(i); li.appendChild(bar); al.appendChild(li); });
+      var bar=document.createElement('span'); bar.className='cbar'; var i=document.createElement('i'); i.style.width=(t?Math.round(d/t*100):0)+'%'; bar.appendChild(i); li.appendChild(bar); al.appendChild(li); });
     var ct=chTitle(); var ti=document.getElementById('chTitle'); if(document.activeElement!==ti) ti.value=(ct==='Most sessions this month'?'':ct);
     document.getElementById('mbBoardTitle').textContent=ct;
     renderBoard(document.getElementById('adBoard'),document.getElementById('adBoardEmpty'));
@@ -5197,7 +5211,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
   }
   function posBadge(){
     var el=document.getElementById('mbPos'), mp=document.getElementById('mbPlayer'); if(!el||!mp) return;
-    var g=setup.pos[mp.value]; el.hidden=!g; el.textContent=g?('Position group: '+g+' ('+setup.sport+'). Your coach can add sessions made for it.'):'';
+    var g=setup.pos[mp.value]; el.hidden=!g; el.textContent=g?('Position group: '+g+' ('+setup.sport+')'):'';
   }
   // ---- Availability: scope and optional own timetable ----
   var slot=null;
@@ -5227,8 +5241,15 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
   document.getElementById('adClear').addEventListener('click',function(){
     if(!st||!st.admin) return; loadPlans();
     var who=SQUAD.filter(function(x){return picked[x];}); if(!who.length){ adMsg('Pick at least one player first.'); return; }
-    who.forEach(function(n){ delete plans[n]; }); savePlans(); renderPlans(); adMsg('Removed all sessions for '+who.length+(who.length===1?' player.':' players.'));
+    if(!armed(this,'')) return; who.forEach(function(n){ delete plans[n]; }); savePlans(); renderPlans(); adMsg('Removed all sessions for '+who.length+(who.length===1?' player.':' players.'));
   });
+  function armed(btn,label){
+    if(btn.getAttribute('data-armed')==='1'){ btn.removeAttribute('data-armed'); btn.textContent=btn.getAttribute('data-label'); return true; }
+    btn.setAttribute('data-label',btn.textContent); btn.setAttribute('data-armed','1'); btn.textContent='Tap again to confirm';
+    setTimeout(function(){ if(btn.getAttribute('data-armed')==='1'){ btn.removeAttribute('data-armed'); btn.textContent=btn.getAttribute('data-label'); } },4000);
+    return false;
+  }
+  function bySlot(a,b){ return (DAYS.indexOf(a.day)-DAYS.indexOf(b.day))||(BLOCKS.indexOf(a.time)-BLOCKS.indexOf(b.time)); }
   function itemText(x){ return x.day+', '+x.time+': '+x.type+(x.note?' - '+x.note:''); }
   var DAYS=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], BLOCKS=['Morning','Lunchtime','Afternoon','Evening'];
   // Made-up lectures and commitments for the demo squad: 'day block' pairs that are busy. Weekends are free.
@@ -5336,7 +5357,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
     fillSquad(mp); buildWho(); if(!setupBuilt) buildSetup(); tpPreview(); showMsg(); posBadge();
     var al=document.getElementById('adList'); al.innerHTML=''; var n=0;
     SQUAD.forEach(function(name){
-      (plans[name]||[]).forEach(function(x){
+      (plans[name]||[]).slice().sort(bySlot).forEach(function(x){
         n++; var li=document.createElement('li'); var sp=document.createElement('span');
         sp.textContent=name+' | '+itemText(x); li.appendChild(sp);
         var b=document.createElement('button'); b.type='button'; b.textContent='Remove';
@@ -5346,11 +5367,17 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
     });
     document.getElementById('adEmpty').hidden=n>0;
     document.getElementById('adSessSum').textContent='4. Sessions added ('+n+')';
-    var ml=document.getElementById('mbList'); ml.innerHTML=''; var items=plans[mp.value]||[];
-    items.forEach(function(x){ var li=document.createElement('li'); var lab=document.createElement('label'); lab.className='tickrow'; var cb=document.createElement('input'); cb.type='checkbox'; cb.checked=!!x.done;
+    var ml=document.getElementById('mbList'); ml.innerHTML=''; var items=(plans[mp.value]||[]).slice().sort(bySlot);
+    items.forEach(function(x){ var li=document.createElement('li'); if(x.done) li.className='isdone'; var lab=document.createElement('label'); lab.className='tickrow'; var cb=document.createElement('input'); cb.type='checkbox'; cb.checked=!!x.done;
       cb.addEventListener('change',function(){ x.done=cb.checked; x.doneAt=cb.checked?Date.now():null; savePlans(); renderPlans(); });
       var sp=document.createElement('span'); sp.textContent=itemText(x); lab.appendChild(cb); lab.appendChild(sp); li.appendChild(lab); ml.appendChild(li); });
     document.getElementById('mbEmpty').hidden=items.length>0;
+    var dn=items.filter(function(x){return x.done;}).length, pr=document.getElementById('mbProg');
+    pr.hidden=!items.length; document.getElementById('mbProgTxt').textContent=dn+' of '+items.length+' done'+(items.length&&dn===items.length?'. All done, nice work.':'');
+    document.getElementById('mbProgBar').style.width=(items.length?Math.round(dn/items.length*100):0)+'%';
+    var tot=0, don=0; SQUAD.forEach(function(nm){ (plans[nm]||[]).forEach(function(x){ tot++; if(x.done) don++; }); });
+    var stt=document.getElementById('adStats');
+    stt.innerHTML='<div><strong>'+SQUAD.length+'</strong><span>players</span></div><div><strong>'+tot+'</strong><span>sessions set</span></div><div><strong>'+(tot?Math.round(don/tot*100):0)+'%</strong><span>done so far</span></div>';
     renderExtras();
   }
   document.getElementById('adAdd').addEventListener('click',function(){
@@ -5420,12 +5447,21 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
     renderPlans(); adMsg('Example data loaded.');
   });
   document.getElementById('exReset').addEventListener('click',function(){
-    if(!st||!st.admin) return; plans={}; fixtures=[]; savePlans(); saveFx(); try{ localStorage.removeItem(CH); localStorage.removeItem(MK); localStorage.removeItem(SK); }catch(e){} buildSetup(); renderPlans(); adMsg('Club data cleared.');
+    if(!st||!st.admin) return; if(!armed(this,'')) return; plans={}; fixtures=[]; savePlans(); saveFx(); try{ localStorage.removeItem(CH); localStorage.removeItem(MK); localStorage.removeItem(SK); }catch(e){} buildSetup(); renderPlans(); adMsg('Club data cleared.');
   });
+  [['msgText','msgPost'],['adNote','adAdd'],['fxOpp','fxAdd']].forEach(function(pr){
+    document.getElementById(pr[0]).addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); document.getElementById(pr[1]).click(); } });
+  });
+  var tg=document.getElementById('adToggleAll');
+  function secs(){ return document.querySelectorAll('details.adsec'); }
+  function tgLabel(){ var any=false; for(var i=0;i<secs().length;i++){ if(!secs()[i].open) any=true; } tg.textContent=any?'Open all sections':'Close all sections'; }
+  tg.addEventListener('click',function(){ var open=tg.textContent==='Open all sections'; for(var i=0;i<secs().length;i++) secs()[i].open=open; tgLabel(); });
+  for(var si=0;si<secs().length;si++) secs()[si].addEventListener('toggle',tgLabel);
+  tgLabel();
   var list=document.getElementById('clDemo');
   DEMO.forEach(function(d,i){
     var li=document.createElement('li');
-    li.innerHTML='<span class="sw" style="background:'+d.c+'"></span><strong>'+d.name+'</strong> <code>'+d.email+'</code> <code>'+d.pw+'</code> ';
+    li.innerHTML='<span class="sw" style="background:'+d.c+'"></span><strong class="role">'+(d.admin?'Coach':'Player')+'</strong> <code>'+d.email+'</code> <code>'+d.pw+'</code> ';
     var b=document.createElement('button'); b.type='button'; b.textContent='Fill in';
     b.addEventListener('click',function(){ document.getElementById('clEmail').value=d.email; document.getElementById('clPass').value=d.pw; });
     li.appendChild(b); list.appendChild(li);
@@ -5446,6 +5482,13 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
     var d=DEMO[1]; st={name:d.name,c:d.c,mono:!!d.mono,admin:true}; save(); apply();
     var ex=document.getElementById('exLoad'); if(ex) ex.click();
     var ad=document.getElementById('clubAdmin'); if(ad&&ad.scrollIntoView) ad.scrollIntoView();
+  });
+  var tryP=document.getElementById('clTryP');
+  if(tryP) tryP.addEventListener('click',function(){
+    var a=DEMO[1], pl=DEMO[0]; st={name:a.name,c:a.c,mono:!!a.mono,admin:true}; apply();
+    var ex=document.getElementById('exLoad'); if(ex) ex.click();
+    st={name:pl.name,c:pl.c,mono:!!pl.mono,admin:false}; save(); apply();
+    var co=document.getElementById('clubCoach'); if(co&&co.scrollIntoView) co.scrollIntoView();
   });
   var shr=document.getElementById('clShare');
   if(shr) shr.setAttribute('href','https://wa.me/?text='+encodeURIComponent('Found a free planner that fits training around lectures, and it has a club mode for squads: https://lecturelift.co.uk/#club'));

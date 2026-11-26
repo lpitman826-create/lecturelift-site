@@ -1,6 +1,6 @@
 /* LectureLift service worker: lets the app open offline.
    Bump CACHE when you upload a new index.html so people get the update. */
-var CACHE = 'lecturelift-v41';
+var CACHE = 'lecturelift-v42';
 var FILES = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', function (e) {
