@@ -341,6 +341,10 @@ button.c.e:hover{background:var(--lecture)}
 .chip{font:inherit; font-size:.9rem; padding:.4rem .8rem; border-radius:2rem; border:1px solid var(--line); background:var(--bg); color:var(--ink); cursor:pointer}
 .plusbar{display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:.4rem .8rem; margin:.2rem 0 1rem; padding:.55rem 1rem; border-radius:2rem; background:linear-gradient(90deg, color-mix(in srgb, var(--accent) 16%, var(--surface)), color-mix(in srgb, var(--accent) 6%, var(--surface))); border:1px solid color-mix(in srgb, var(--accent) 35%, var(--line)); font-size:.92rem; color:var(--ink)}
 .plusbar[hidden],.plusbar[data-gone]{display:none}
+:root:not(.signedin):has(#view-home:not([hidden])) .plusbar{display:none}
+.clubline{margin:.9rem 0 0; font-size:.95rem; color:var(--muted)}
+.clubline a{font-weight:600}
+.chip[data-today]::after{content:' today'; font-size:.68em; font-weight:600; opacity:.85}
 .plusbar a{font-weight:700; color:var(--accent-ink); background:var(--accent); padding:.3rem .9rem; border-radius:2rem; text-decoration:none; box-shadow:0 6px 14px -6px color-mix(in srgb, var(--accent) 75%, transparent)}
 .plusbar a:hover{filter:brightness(1.08)}
 .authstack{display:flex; flex-direction:column; align-items:flex-end; gap:.3rem}
@@ -1401,8 +1405,9 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
       <p class="eyebrow pub">Free student planner &middot; Built in Cardiff</p>
       <h1 class="pub">Gym plans that fit <span class="hl">around your lectures</span>, not the other way round.</h1>
       <p class="lede pub">Simple, affordable workout plans for students, built around your timetable, your budget, and your goals.</p>
-      <div class="btnrow pub"><a class="btn go" href="#join">Get early access</a><a class="btn alt" href="#planner">Try the planner</a></div>
+      <div class="btnrow pub"><a class="btn go" href="#planner">Try the planner</a><a class="btn alt" href="#signup" data-view="signup">Make a free account</a></div>
       <ul class="trust pub" aria-label="Why students use it"><li>Free to use</li><li>No account needed</li><li>Works on your phone</li></ul>
+      <p class="clubline pub">Run a team? <a href="#club">Try the club demo</a></p>
       <h1 class="mem">My planner</h1>
       <p class="lede mem">Mark your lectures and your training will fit around them. Tap a Gym or Run slot to see the session, then tick it off when it’s done.</p>
       <a class="btn alt mem" href="#checkout">Get Plus</a>
@@ -1589,9 +1594,9 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
     <div class="ctabanner">
       <div class="ctatext">
         <h2>Help shape it</h2>
-        <p>We’re building this now and want your input. Join the early list to try it first. It takes under a minute: add your email and tell us your biggest struggle with the gym.</p>
+        <p>We’re building this now and want your input. Join the list to hear about new features first. It takes under a minute: add your email and tell us your biggest struggle with the gym.</p>
       </div>
-      <a class="btn" href="https://docs.google.com/forms/d/e/1FAIpQLScXqKrfC0jdmZ_pN2SYtXg2Y0Nx4dqOxP7KomSsqYDiWZJVug/viewform" target="_blank" rel="noopener noreferrer">Get early access</a>
+      <a class="btn" href="https://docs.google.com/forms/d/e/1FAIpQLScXqKrfC0jdmZ_pN2SYtXg2Y0Nx4dqOxP7KomSsqYDiWZJVug/viewform" target="_blank" rel="noopener noreferrer">Join the list</a>
     </div>
   </section>
 
@@ -2244,6 +2249,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
   <div class="inst">
     <p class="wndate">26 November 2026</p>
     <ul class="wnlist">
+      <li><strong>Clearer home page</strong><span>The main button is now Try the planner, with Make a free account next to it, a link to the club demo, and a Today marker on the day buttons.</span></li>
       <li><strong>Club mode: see it as a player</strong><span>A second one-tap demo shows what a player sees: their sessions, a progress bar, the coach&rsquo;s message and their position.</span></li>
       <li><strong>Club mode: easier for coaches</strong><span>A summary strip, open-all and close-all for the sections, Enter to add, and a second tap to confirm before anything is cleared.</span></li>
       <li><strong>Club mode: positions</strong><span>Pick a sport, give each player a position group, select a whole group in one tap, and add a session made for each position.</span></li>
@@ -5500,6 +5506,9 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
   // Skip link: move focus to the page that is showing
   var sk=document.querySelector('.skip');
   if(sk){ sk.addEventListener('click',function(e){ e.preventDefault(); var ms=document.querySelectorAll('main'); for(var i=0;i<ms.length;i++){ if(!ms[i].hidden){ ms[i].setAttribute('tabindex','-1'); ms[i].focus(); ms[i].scrollIntoView(); break; } } }); }
+  // Mark today on the planner day buttons
+  (function(){ var t=(new Date().getDay()+6)%7, cs=document.querySelectorAll('.chip[data-showday]');
+    for(var k=0;k<cs.length;k++){ if(+cs[k].getAttribute('data-showday')===t){ cs[k].setAttribute('data-today','1'); cs[k].setAttribute('aria-label',cs[k].textContent+' (today)'); } } })();
   // Hint that wide week grids scroll sideways on small screens
   var gs=document.querySelectorAll('.week .grid');
   for(var i=0;i<gs.length;i++){ var p=document.createElement('p'); p.className='swipehint'; p.textContent='Swipe sideways to see the whole week.'; gs[i].parentNode.insertBefore(p,gs[i]); }
