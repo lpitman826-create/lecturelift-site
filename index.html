@@ -361,6 +361,31 @@ button.c.e:hover{background:var(--lecture)}
 input[type=color]{width:3rem; height:2.4rem; padding:0; border:1px solid var(--line); border-radius:.5rem; background:var(--bg); cursor:pointer}
 .clubdemo{margin-top:1.2rem; padding:1rem; border-radius:1rem; border:1px dashed var(--line); background:var(--bg)}
 .clubdemo h4{margin:0 0 .5rem; font-size:.95rem}
+.tryrow{display:grid; gap:.6rem; margin:0 0 1rem}
+.tryrow .plan-note{margin:0}
+table.fw{width:100%; border-collapse:separate; border-spacing:4px; table-layout:fixed; margin:.4rem 0 .2rem; font-size:.85rem}
+table.fw th{font-weight:600; color:var(--muted); padding:.1rem .1rem .3rem; font-size:.78rem}
+table.fw th[scope=row]{text-align:left; width:2.6rem; padding:0 .2rem 0 0}
+table.fw button{position:relative; overflow:hidden; width:100%; min-height:44px; border-radius:.6rem; border:1px solid var(--line); background:var(--surface); color:var(--ink); font-weight:700; font-size:.95rem; cursor:pointer; padding-bottom:.3rem}
+table.fw button::after{content:''; position:absolute; left:0; bottom:0; height:6px; width:calc(var(--p) * 100%); background:var(--accent)}
+table.fw button[aria-pressed=true]{outline:3px solid var(--accent); outline-offset:1px}
+.fwbest{font-weight:600; margin:.7rem 0 0}
+details.adsec{border:1px solid var(--line); border-radius:1rem; margin:.8rem 0; background:var(--surface)}
+details.adsec>summary{list-style:none; cursor:pointer; padding:.85rem 1rem; font-weight:700; display:flex; align-items:center; justify-content:space-between; gap:.6rem; min-height:44px; border-radius:1rem}
+details.adsec>summary::-webkit-details-marker{display:none}
+details.adsec>summary::after{content:'+'; font-size:1.3rem; line-height:1; color:var(--muted); flex:none}
+details.adsec[open]>summary::after{content:'\2013'}
+details.adsec>summary:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
+details.adsec[open]>summary{border-bottom:1px solid var(--line); border-bottom-left-radius:0; border-bottom-right-radius:0}
+details.adsec .adbody{padding:.9rem 1rem 1.1rem}
+details.adsec .adbody>h4:first-child{margin-top:0}
+#clubAdmin p.adtoast{color:var(--accent-ink)}
+@media (min-width:821px){#clubAdmin p.adtoast{top:66px}}
+.adtoast{position:sticky; top:118px; z-index:20; margin:.6rem 0; padding:.6rem .8rem; border-radius:.8rem; background:var(--accent); color:var(--accent-ink); font-weight:600}
+.posgrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(8.5rem,1fr)); gap:.5rem}
+.posgrid label{display:grid; gap:.15rem; font-size:.85rem; font-weight:600}
+.posgrid select{width:100%}
+#clubCoach .grpnote{font-weight:600; margin:.4rem 0 0}
 .clubdemo ul{list-style:none; margin:0; padding:0; display:grid; gap:.5rem; font-size:.9rem}
 .clubdemo li{display:flex; flex-wrap:wrap; gap:.2rem .6rem; align-items:center}
 .clubdemo .sw{width:.9rem; height:.9rem; border-radius:50%; flex:none; border:1px solid var(--line)}
@@ -1296,6 +1321,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
 @media (pointer:coarse),(max-width:820px){
   header nav a{min-height:44px; display:inline-flex; align-items:center}
   .chip{min-height:44px}
+  #clubAdmin li button,.clubdemo button{min-height:44px}
   button.sw{width:44px; height:44px}
   .fav{min-width:44px; min-height:44px}
   .exhead{min-height:44px}
@@ -1989,6 +2015,10 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
         <p class="plan-note" id="clErr" role="alert" hidden>Those details don’t match the demo club. Use the one listed below.</p>
         <div class="actions"><button type="submit" class="btn">Log in to club mode</button></div>
       </form>
+      <div class="tryrow" id="clTryRow">
+        <button type="button" class="btn" id="clTry">Try the coach demo in one tap</button>
+        <p class="plan-note">Logs you in as the demo club&rsquo;s coach and fills in an example squad, so you can see it working straight away. Nothing leaves your device.</p>
+      </div>
       <div class="clubdemo">
         <h4>Demo club for this preview</h4>
         <ul id="clDemo"></ul>
@@ -2007,58 +2037,144 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
       <label class="per" for="clColour" id="clColourLbl">Club colour</label>
       <div id="clColourRow" style="display:flex; align-items:center; gap:.7rem; margin-bottom:1rem"><input type="color" id="clColour" aria-label="Club colour"><span class="plan-note" style="margin:0">Pick your club’s main colour to see the site change.</span></div>
       <div class="actions"><a class="btn" href="#app">Open my space</a><a class="btn alt" href="#plus">See Plus features</a><button type="button" class="btn alt" id="clLeave">Leave club mode</button></div>
+      <p class="plan-note" style="margin-top:1rem">Know a club captain? <a id="clShare" href="https://wa.me/" target="_blank" rel="noopener noreferrer">Send them this demo on WhatsApp</a></p>
       <p class="plan-note">Players would log in with the club details and get their own plan built around their own lectures.</p>
     </div>
 
     <div class="pcard" id="clubAdmin" hidden>
       <h3>Coach admin</h3>
-      <p class="plan-sub">Add a session to one player, several, or the whole squad at once. In this preview the squad is made up and everything is saved on this device only.</p>
-      <p style="margin:.8rem 0 .3rem; font-weight:600">Who is it for?</p>
-      <div class="chips" id="adWho" role="group" aria-label="Players"></div>
-      <div class="btnrow" style="margin-top:.5rem"><button type="button" class="chip" id="adAll">Select everyone</button><button type="button" class="chip" id="adNone">Clear selection</button></div>
-      <p class="plan-note" id="adCount" style="margin:.4rem 0 0">No one selected.</p>
-      <div class="adrow">
-        <label class="per">Day <select id="adDay"><option>Mon</option><option>Tue</option><option>Wed</option><option>Thu</option><option>Fri</option><option>Sat</option><option>Sun</option></select></label>
-        <label class="per">Time <select id="adTime"><option>Morning</option><option>Lunchtime</option><option>Afternoon</option><option>Evening</option></select></label>
-        <label class="per">Type <select id="adType"><option>Gym</option><option>Run</option><option>Match</option><option>Other</option></select></label>
-      </div>
-      <label class="per" for="adNote">Note for the player</label>
-      <input type="text" id="adNote" class="txt" maxlength="80" placeholder="For example: lower body and sprints">
-      <div class="actions"><button type="button" class="btn" id="adAdd">Add to selected plans</button><button type="button" class="btn alt" id="adClear">Clear sessions from selected plans</button></div>
-      <p class="plan-note" id="adMsg" role="status" hidden></p>
-      <h4 style="margin:1.2rem 0 0">Sessions added</h4>
-      <ul id="adList"></ul>
-      <p class="plan-note" id="adEmpty">Nothing added yet.</p>
+      <p class="plan-sub">Plan the squad&rsquo;s week in a few taps. In this preview the squad is made up and everything is saved on this device only.</p>
+      <p class="plan-note adtoast" id="adMsg" role="status" hidden></p>
 
-      <h4>Match days</h4>
-      <p class="plan-sub" style="margin:0">Add fixtures and each player automatically gets a rest day before and a recovery day after.</p>
-      <div class="adrow">
-        <label class="per">Opponent <input type="text" id="fxOpp" class="txt" maxlength="40" placeholder="For example: Cardiff Uni 2nds" style="margin:.2rem 0 0"></label>
-        <label class="per">Date <input type="date" id="fxDate" class="txt" style="margin:.2rem 0 0"></label>
-      </div>
-      <div class="actions"><button type="button" class="btn" id="fxAdd">Add fixture</button></div>
-      <ul id="fxList"></ul>
-      <p class="plan-note" id="fxEmpty">No fixtures yet.</p>
+      <details class="adsec" open>
+        <summary>1. Squad and positions</summary>
+        <div class="adbody">
+          <label class="per" for="cfSport">Sport</label>
+          <select id="cfSport"><option value="rugby">Rugby</option><option value="football">Football</option><option value="hockey">Hockey</option><option value="netball">Netball</option><option value="basketball">Basketball</option><option value="cricket">Cricket</option></select>
+          <p class="plan-sub" style="margin:.8rem 0 .3rem">Positions. Change anyone&rsquo;s group if the demo guessed wrong.</p>
+          <div class="posgrid" id="cfPos"></div>
+          <p style="margin:1rem 0 .3rem; font-weight:600">Who is it for?</p>
+          <div class="btnrow" id="cfGroups" style="margin-bottom:.5rem"></div>
+          <div class="chips" id="adWho" role="group" aria-label="Players"></div>
+          <div class="btnrow" style="margin-top:.5rem"><button type="button" class="chip" id="adAll">Select everyone</button><button type="button" class="chip" id="adNone">Clear selection</button></div>
+          <p class="plan-note" id="adCount" style="margin:.4rem 0 0">No one selected.</p>
+        </div>
+      </details>
 
-      <h4>Attendance</h4>
-      <p class="plan-sub" style="margin:0">Players tick off the sessions you set. Here is how the squad is doing.</p>
-      <ul id="atList"></ul>
+      <details class="adsec" open>
+        <summary>2. When is everyone free</summary>
+        <div class="adbody">
+          <p class="plan-sub" style="margin:0">Find the best time for a session. These are made-up timetables for the demo squad. In the real product this would use each player&rsquo;s own timetable, and only with their permission.</p>
+          <label class="per" for="fwScope">Show availability for</label>
+          <select id="fwScope"></select>
+          <label class="tickrow" style="margin-top:.6rem"><input type="checkbox" id="fwMine"><span>Add me, using the timetable in my own planner (this device only)</span></label>
+          <p class="plan-note" id="fwMineNote" style="margin:.2rem 0 0" hidden></p>
+          <p class="fwbest" id="fwBest"></p>
+          <table class="fw" id="fwGrid"></table>
+          <p class="plan-note" style="margin:.2rem 0 0" id="fwHelp">Tap a time to pick it and select everyone who is free then. The number is how many players are free, and the bar under it shows the same.</p>
+        </div>
+      </details>
 
-      <h4>Team challenge</h4>
-      <label class="per" for="chTitle">Challenge name</label>
-      <input type="text" id="chTitle" class="txt" maxlength="50" placeholder="Most sessions this month">
-      <ol class="board" id="adBoard"></ol>
-      <p class="plan-note" id="adBoardEmpty">No sessions ticked off yet this month.</p>
+      <details class="adsec" open>
+        <summary>3. Add sessions</summary>
+        <div class="adbody">
+          <h4 style="margin:0">A whole week in one tap</h4>
+          <p class="plan-sub" style="margin:0">Adds a ready-made week to the players selected in step 1.</p>
+          <div class="adrow">
+            <label class="per">Week <select id="tpSel"><option value="pre">Pre-season week (5 sessions)</option><option value="in">In-season week (3 sessions)</option><option value="exam">Exam week, light (2 sessions)</option></select></label>
+          </div>
+          <p class="plan-note" id="tpPreview" style="margin:.2rem 0 0"></p>
+          <div class="actions"><button type="button" class="btn" id="tpAdd">Add this week to selected players</button></div>
 
-      <h4>Try it with example data</h4>
-      <div class="btnrow"><button type="button" class="btn alt" id="exLoad">Load example data</button><button type="button" class="btn alt" id="exReset">Clear all club data</button></div>
-      <p class="plan-note">Example data adds sample sessions, ticks and a fixture for the made-up squad so you can see how it looks.</p>
+          <h4>One session</h4>
+          <div class="adrow">
+            <label class="per">Day <select id="adDay"><option>Mon</option><option>Tue</option><option>Wed</option><option>Thu</option><option>Fri</option><option>Sat</option><option>Sun</option></select></label>
+            <label class="per">Time <select id="adTime"><option>Morning</option><option>Lunchtime</option><option>Afternoon</option><option>Evening</option></select></label>
+            <label class="per">Type <select id="adType"><option>Gym</option><option>Run</option><option>Match</option><option>Other</option></select></label>
+          </div>
+          <label class="per" for="adNote">Note for the player</label>
+          <input type="text" id="adNote" class="txt" maxlength="80" placeholder="For example: lower body and sprints">
+          <div class="actions"><button type="button" class="btn" id="adAdd">Add to selected plans</button><button type="button" class="btn alt" id="adClear">Clear sessions from selected plans</button></div>
+
+          <h4>A session for each position</h4>
+          <p class="plan-sub" style="margin:0">Uses the day and time above. Each selected player gets the session made for their own position.</p>
+          <p class="plan-note" id="adPosPreview" style="margin:.2rem 0 0"></p>
+          <div class="actions"><button type="button" class="btn" id="adPos">Add position sessions</button></div>
+        </div>
+      </details>
+
+      <details class="adsec" id="adSessBox">
+        <summary id="adSessSum">4. Sessions added</summary>
+        <div class="adbody">
+          <ul id="adList"></ul>
+          <p class="plan-note" id="adEmpty">Nothing added yet.</p>
+        </div>
+      </details>
+
+      <details class="adsec">
+        <summary>5. Match days</summary>
+        <div class="adbody">
+          <p class="plan-sub" style="margin:0">Add fixtures and each player automatically gets a rest day before and a recovery day after.</p>
+          <div class="adrow">
+            <label class="per">Opponent <input type="text" id="fxOpp" class="txt" maxlength="40" placeholder="For example: Cardiff Uni 2nds" style="margin:.2rem 0 0"></label>
+            <label class="per">Date <input type="date" id="fxDate" class="txt" style="margin:.2rem 0 0"></label>
+          </div>
+          <div class="actions"><button type="button" class="btn" id="fxAdd">Add fixture</button></div>
+          <ul id="fxList"></ul>
+          <p class="plan-note" id="fxEmpty">No fixtures yet.</p>
+        </div>
+      </details>
+
+      <details class="adsec">
+        <summary>6. Attendance and challenge</summary>
+        <div class="adbody">
+          <p class="plan-sub" style="margin:0">Players tick off the sessions you set. Here is how the squad is doing.</p>
+          <ul id="atList"></ul>
+          <h4>Team challenge</h4>
+          <label class="per" for="chTitle">Challenge name</label>
+          <input type="text" id="chTitle" class="txt" maxlength="50" placeholder="Most sessions this month">
+          <ol class="board" id="adBoard"></ol>
+          <p class="plan-note" id="adBoardEmpty">No sessions ticked off yet this month.</p>
+        </div>
+      </details>
+
+      <details class="adsec">
+        <summary>7. Message and share</summary>
+        <div class="adbody">
+          <h4 style="margin:0">Message to the squad</h4>
+          <p class="plan-sub" style="margin:0">Players see this at the top of their page. In the real product it could also be sent to their phones.</p>
+          <label class="per" for="msgText">Your message</label>
+          <input type="text" id="msgText" class="txt" maxlength="160" placeholder="For example: Pitch session moved to 6pm Thursday">
+          <div class="actions"><button type="button" class="btn" id="msgPost">Post to the squad</button><button type="button" class="btn alt" id="msgClear">Remove message</button></div>
+          <p class="plan-note" id="msgCur" role="status">No message posted.</p>
+
+          <h4>Share the squad&rsquo;s week</h4>
+          <p class="plan-sub" style="margin:0">Make a short summary of every session and fixture, ready to paste into the team group chat.</p>
+          <div class="actions"><button type="button" class="btn" id="shBuild">Make the summary</button></div>
+          <div id="shBox" hidden>
+            <label class="per" for="shText">Summary</label>
+            <textarea id="shText" class="txt" rows="9" readonly style="width:100%"></textarea>
+            <div class="actions"><button type="button" class="btn alt" id="shCopy">Copy</button><a class="btn alt" id="shWa" href="https://wa.me/" target="_blank" rel="noopener noreferrer">Send on WhatsApp</a></div>
+            <p class="plan-note" id="shMsg" role="status" hidden></p>
+          </div>
+        </div>
+      </details>
+
+      <details class="adsec">
+        <summary>8. Try it with example data</summary>
+        <div class="adbody">
+          <div class="btnrow"><button type="button" class="btn alt" id="exLoad">Load example data</button><button type="button" class="btn alt" id="exReset">Clear all club data</button></div>
+          <p class="plan-note">Example data adds sample sessions, ticks, a message and a fixture for the made-up squad so you can see how it looks.</p>
+        </div>
+      </details>
     </div>
 
     <div class="pcard" id="clubCoach" hidden>
       <h3>From your coach</h3>
       <p class="plan-sub">Sessions your coach has added to your plan.</p>
+      <p class="plan-note" id="mbMsg" hidden style="font-weight:600"></p>
       <label class="per">I am <select id="mbPlayer"></select></label>
+      <p class="grpnote" id="mbPos" hidden></p>
       <ul id="mbList"></ul>
       <p class="plan-note" id="mbEmpty">Nothing from your coach yet.</p>
       <h4>Match days</h4>
@@ -2114,6 +2230,15 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
     <p class="lede">A short list of what we have added lately. LectureLift is built by one student, and it gets better a little every week.</p>
   </div>
   <div class="inst">
+    <p class="wndate">26 November 2026</p>
+    <ul class="wnlist">
+      <li><strong>Club mode: positions</strong><span>Pick a sport, give each player a position group, select a whole group in one tap, and add a session made for each position.</span></li>
+      <li><strong>Club mode: free-time grid by group</strong><span>See when the whole squad, one position group or just your selected players are free. You can also add your own planner timetable, kept on your device.</span></li>
+      <li><strong>Club mode: easier coach page</strong><span>The coach page is now in sections that open and close, with a message that stays in view while you work.</span></li>
+      <li><strong>Club mode: try it in one tap</strong><span>The club demo now has a one-tap coach login with an example squad, so you can see it working straight away.</span></li>
+      <li><strong>Club mode: whole weeks, messages and a group-chat summary</strong><span>Coaches can add a ready-made week to selected players, post a message to the squad, and copy a summary of the week to paste into the team chat.</span></li>
+      <li><strong>Club mode: who is free when</strong><span>A grid shows how many players are free at each time. Tap a time to select everyone who is free and add a session.</span></li>
+    </ul>
     <p class="wndate">25 November 2026</p>
     <ul class="wnlist">
       <li><strong>Undo after ticking a session</strong><span>Ticked one by mistake? A short message appears with an Undo button.</span></li>
@@ -5001,9 +5126,102 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
   function count(){
     var n=SQUAD.filter(function(x){return picked[x];}).length;
     document.getElementById('adCount').textContent=n?(n+(n===1?' player selected.':' players selected.')):'No one selected.';
+    if(typeof afterPick==='function') afterPick();
   }
   function setAll(v){ SQUAD.forEach(function(n){ picked[n]=v; }); var bs=document.querySelectorAll('#adWho .chip'); for(var i=0;i<bs.length;i++){ bs[i].setAttribute('aria-pressed',v?'true':'false'); } count(); }
   function adMsg(t){ var m=document.getElementById('adMsg'); m.textContent=t; m.hidden=false; }
+  // ---- Sports, positions and position sessions ----
+  var SK='lecturelift-clubsetup-v1', setup={sport:'rugby',pos:{}};
+  var GROUPS={
+    rugby:['Forwards','Backs'], football:['Defenders','Midfielders','Attackers'], hockey:['Defenders','Midfielders','Attackers'],
+    netball:['Defence','Centre court','Attack'], basketball:['Guards','Forwards','Centres'], cricket:['Batters','Bowlers','All-rounders']
+  };
+  var POSSESS={
+    rugby:{'Forwards':['Gym','Scrum strength: neck, back and legs'],'Backs':['Run','Speed and agility, repeat sprints']},
+    football:{'Defenders':['Gym','Strength and jumping'],'Midfielders':['Run','Stamina, long intervals'],'Attackers':['Run','Sprints and finishing speed']},
+    hockey:{'Defenders':['Gym','Core and lower body'],'Midfielders':['Run','Stamina intervals'],'Attackers':['Run','Short sprints and agility']},
+    netball:{'Defence':['Gym','Leg strength and landing'],'Centre court':['Run','Stamina and quick changes of direction'],'Attack':['Run','Sprints and agility']},
+    basketball:{'Guards':['Run','Agility and sprints'],'Forwards':['Gym','Lower body power'],'Centres':['Gym','Strength and jumping']},
+    cricket:{'Batters':['Gym','Core and rotational strength'],'Bowlers':['Gym','Shoulder, core and leg strength'],'All-rounders':['Run','Fitness and fielding speed']}
+  };
+  var RUGBY_DEF=['Forwards','Forwards','Forwards','Backs','Backs','Backs','Forwards','Backs'];
+  function defaultPos(sport){ var g=GROUPS[sport], o={}; SQUAD.forEach(function(n,i){ o[n]=(sport==='rugby')?RUGBY_DEF[i]:g[i%g.length]; }); return o; }
+  function loadSetup(){
+    var r=null; try{ r=JSON.parse(localStorage.getItem(SK)||'null'); }catch(e){}
+    var sp=(r&&typeof r.sport==='string'&&GROUPS[r.sport])?r.sport:'rugby';
+    var pos=defaultPos(sp); if(r&&r.pos&&typeof r.pos==='object'){ SQUAD.forEach(function(n){ if(GROUPS[sp].indexOf(r.pos[n])>=0) pos[n]=r.pos[n]; }); }
+    setup={sport:sp,pos:pos};
+  }
+  function saveSetup(){ try{ localStorage.setItem(SK,JSON.stringify(setup)); }catch(e){} }
+  function members(g){ return SQUAD.filter(function(n){ return setup.pos[n]===g; }); }
+  function syncChips(){ var bs=document.querySelectorAll('#adWho .chip'); for(var j=0;j<bs.length;j++){ bs[j].setAttribute('aria-pressed',picked[SQUAD[j]]?'true':'false'); } count(); }
+  var setupBuilt=false;
+  function buildSetup(){
+    loadSetup(); setupBuilt=true;
+    document.getElementById('cfSport').value=setup.sport;
+    var pg=document.getElementById('cfPos'); pg.innerHTML='';
+    SQUAD.forEach(function(n){
+      var lab=document.createElement('label'); lab.appendChild(document.createTextNode(n));
+      var sel=document.createElement('select'); sel.setAttribute('aria-label',n+' position group');
+      GROUPS[setup.sport].forEach(function(g){ var o=document.createElement('option'); o.textContent=g; sel.appendChild(o); });
+      sel.value=setup.pos[n];
+      sel.addEventListener('change',function(){ setup.pos[n]=sel.value; saveSetup(); buildGroupBtns(); buildScope(); buildFree(); posPreview(); posBadge(); });
+      lab.appendChild(sel); pg.appendChild(lab);
+    });
+    buildGroupBtns(); buildScope(); buildFree(); posPreview(); posBadge();
+  }
+  function buildGroupBtns(){
+    var gb=document.getElementById('cfGroups'); gb.innerHTML='';
+    GROUPS[setup.sport].forEach(function(g){
+      var b=document.createElement('button'); b.type='button'; b.className='chip'; b.textContent='Only '+g+' ('+members(g).length+')';
+      b.addEventListener('click',function(){
+        var m=members(g); SQUAD.forEach(function(n){ picked[n]=m.indexOf(n)>=0; }); syncChips();
+        adMsg(m.length?('Selected '+m.length+' '+g.toLowerCase()+'.'):('No players are in '+g+' yet.'));
+      });
+      gb.appendChild(b);
+    });
+  }
+  function buildScope(){
+    var sc=document.getElementById('fwScope'), keep=sc.value||'all'; sc.innerHTML='';
+    function add(v,t){ var o=document.createElement('option'); o.value=v; o.textContent=t; sc.appendChild(o); }
+    add('all','Whole squad ('+SQUAD.length+')');
+    GROUPS[setup.sport].forEach(function(g){ add('g:'+g,g+' ('+members(g).length+')'); });
+    add('sel','Players I have selected');
+    var ok=false; for(var i=0;i<sc.options.length;i++){ if(sc.options[i].value===keep) ok=true; }
+    sc.value=ok?keep:'all';
+  }
+  function posPreview(){
+    var el=document.getElementById('adPosPreview'); if(!el) return;
+    var who=SQUAD.filter(function(n){return picked[n];}), gs=GROUPS[setup.sport].filter(function(g){ return !who.length || who.some(function(n){return setup.pos[n]===g;}); });
+    el.textContent=gs.map(function(g){ var x=POSSESS[setup.sport][g]; return g+': '+x[0].toLowerCase()+', '+x[1].toLowerCase(); }).join('. ')+'.';
+  }
+  function posBadge(){
+    var el=document.getElementById('mbPos'), mp=document.getElementById('mbPlayer'); if(!el||!mp) return;
+    var g=setup.pos[mp.value]; el.hidden=!g; el.textContent=g?('Position group: '+g+' ('+setup.sport+'). Your coach can add sessions made for it.'):'';
+  }
+  // ---- Availability: scope and optional own timetable ----
+  var slot=null;
+  function mineBusy(){
+    try{
+      var r=JSON.parse(localStorage.getItem('lecturelift-week-v3')||'null'), L=r&&r.lect;
+      if(!Array.isArray(L)||L.length<7) return null;
+      var RG=[[0,6],[6,8],[8,12],[12,16]], busy={}, any=false;
+      for(var d=0;d<7;d++){ var row=Array.isArray(L[d])?L[d]:[];
+        RG.forEach(function(rg,b){ var run=0, ok=false;
+          for(var h=rg[0];h<rg[1];h++){ var v=row[h]; if(v&&v!==0){ any=true; run=0; } else { run++; if(run>=2) ok=true; } }
+          if(!ok) busy[d+' '+b]=1; });
+      }
+      return {busy:busy,any:any};
+    }catch(e){ return null; }
+  }
+  function scopeNames(){
+    var v=document.getElementById('fwScope').value;
+    if(v==='sel') return SQUAD.filter(function(n){return picked[n];});
+    if(v.indexOf('g:')===0) return members(v.slice(2));
+    return SQUAD.slice();
+  }
+  function includeMine(){ var c=document.getElementById('fwMine'); return !!(c&&c.checked&&document.getElementById('fwScope').value==='all'); }
+  function afterPick(){ posPreview(); if(setupBuilt&&document.getElementById('fwScope').value==='sel') buildFree(); }
   document.getElementById('adAll').addEventListener('click',function(){ setAll(true); });
   document.getElementById('adNone').addEventListener('click',function(){ setAll(false); });
   document.getElementById('adClear').addEventListener('click',function(){
@@ -5012,10 +5230,110 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
     who.forEach(function(n){ delete plans[n]; }); savePlans(); renderPlans(); adMsg('Removed all sessions for '+who.length+(who.length===1?' player.':' players.'));
   });
   function itemText(x){ return x.day+', '+x.time+': '+x.type+(x.note?' - '+x.note:''); }
+  var DAYS=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], BLOCKS=['Morning','Lunchtime','Afternoon','Evening'];
+  // Made-up lectures and commitments for the demo squad: 'day block' pairs that are busy. Weekends are free.
+  var BUSY={
+    Alex:['0 0','0 1','1 0','1 2','2 2','3 0','3 1','4 0','4 3'],
+    Ben:['0 0','0 2','0 3','1 1','2 2','3 0','3 2','4 0','4 1'],
+    Callum:['0 1','0 2','0 3','1 0','1 1','2 2','3 1','4 2'],
+    Dan:['0 0','1 0','1 2','1 3','2 0','2 2','3 0','3 1','3 2'],
+    Eli:['0 0','0 1','0 2','1 1','2 2','3 2','3 3','4 0','4 1'],
+    Finn:['0 2','1 0','1 1','2 2','2 3','3 0','3 1','4 0'],
+    Gareth:['0 0','0 1','1 2','2 1','2 2','3 0','3 3','4 0','4 2'],
+    Harry:['0 1','0 2','1 0','1 2','2 2','3 1','3 2','4 1']
+  };
+  function freeFor(d,b){ return SQUAD.filter(function(n){ return (BUSY[n]||[]).indexOf(d+' '+b)<0; }); }
+  // Ready-made weeks for the coach
+  var TEMPLATES={
+    pre:[['Mon','Morning','Gym','Lower body strength'],['Tue','Evening','Run','Intervals'],['Wed','Lunchtime','Gym','Upper body'],['Thu','Evening','Run','Easy 5k'],['Fri','Morning','Gym','Full body and mobility']],
+    in:[['Mon','Evening','Gym','Strength, keep it light'],['Wed','Lunchtime','Run','Short speed work'],['Fri','Morning','Gym','Mobility and activation']],
+    exam:[['Tue','Lunchtime','Run','Easy 20 minutes'],['Thu','Afternoon','Gym','Short full body, 30 minutes']]
+  };
+  var MK='lecturelift-clubmsg-v1';
+  function getMsg(){ try{ var m=localStorage.getItem(MK); return m?String(m).slice(0,160):''; }catch(e){ return ''; } }
+  function showMsg(){
+    var m=getMsg(), pl=document.getElementById('mbMsg'), cur=document.getElementById('msgCur');
+    if(pl){ pl.hidden=!m; pl.textContent=m?('Message from your coach: '+m):''; }
+    if(cur) cur.textContent=m?('Posted: '+m):'No message posted.';
+  }
+  function tpPreview(){
+    var t=document.getElementById('tpSel'), pr=document.getElementById('tpPreview'); if(!t||!pr) return;
+    pr.textContent=(TEMPLATES[t.value]||[]).map(function(x){ return x[0]+' '+x[1].toLowerCase()+' '+x[2].toLowerCase(); }).join(', ')+'.';
+  }
+  function dayIdx(d){ return DAYS.indexOf(d); }
+  function blockIdx(b){ return BLOCKS.indexOf(b); }
+  function fmtDate(iso){ var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(iso||''); if(!m) return ''; var d=new Date(+m[1],+m[2]-1,+m[3]); return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()]+' '+d.getDate()+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]; }
+  function sumWho(who){
+    if(who.length===SQUAD.length) return 'whole squad';
+    var gs=GROUPS[setup.sport]||[];
+    for(var i=0;i<gs.length;i++){ var m=members(gs[i]); if(m.length===who.length&&who.every(function(n){return m.indexOf(n)>=0;})) return gs[i]; }
+    return who.join(', ');
+  }
+  function buildSummary(){
+    loadPlans(); loadFx();
+    var groups={}, order=[];
+    SQUAD.forEach(function(n){ (plans[n]||[]).forEach(function(x){
+      var k=x.day+'|'+x.time+'|'+x.type+'|'+(x.note||''); if(!groups[k]){ groups[k]={day:x.day,time:x.time,type:x.type,note:x.note||'',who:[]}; order.push(k); }
+      groups[k].who.push(n);
+    }); });
+    order.sort(function(a,b){ var A=groups[a],B=groups[b]; return (dayIdx(A.day)-dayIdx(B.day))||(blockIdx(A.time)-blockIdx(B.time)); });
+    var lines=[(st&&st.name?st.name:'Club')+' training this week'];
+    var msg=getMsg(); if(msg) lines.push('Message: '+msg);
+    lines.push('');
+    if(!order.length) lines.push('No sessions added yet.');
+    order.forEach(function(k){ var g=groups[k]; lines.push(g.day+' '+g.time.toLowerCase()+', '+g.type.toLowerCase()+(g.note?' ('+g.note+')':'')+': '+sumWho(g.who)); });
+    var fx=fixtures.filter(function(f){ return fmtDate(f.date); }).sort(function(a,b){ return a.date<b.date?-1:1; });
+    if(fx.length){ lines.push(''); lines.push('Fixtures:'); fx.forEach(function(f){ lines.push(fmtDate(f.date)+(f.opp?' v '+f.opp:'')); }); }
+    lines.push(''); lines.push('Made with LectureLift: lecturelift.co.uk');
+    return lines.join('\n');
+  }
+  function buildFree(){
+    var g=document.getElementById('fwGrid'); if(!g) return;
+    var names=scopeNames(), mine=null, note=document.getElementById('fwMineNote'), chk=document.getElementById('fwMine'), v=document.getElementById('fwScope').value;
+    if(chk&&chk.checked){
+      if(v!=='all'){ note.textContent='Your own timetable is only added when you look at the whole squad.'; note.hidden=false; }
+      else { mine=mineBusy();
+        if(!mine||!mine.any){ note.textContent='Your planner has no lectures or commitments yet, so you show as free all week. Fill in the planner and it will show here.'; mine=mine||{busy:{},any:false}; }
+        else { note.textContent='Your own planner timetable is included as "You". It stays on this device. Real squads would need each player to share theirs.'; }
+        note.hidden=false; }
+    } else if(note){ note.hidden=true; }
+    var N=names.length+(mine?1:0);
+    function freeList(d,b){ var f=names.filter(function(n){ return (BUSY[n]||[]).indexOf(d+' '+b)<0; }); if(mine&&!mine.busy[d+' '+b]) f.push('You'); return f; }
+    var bt=document.getElementById('fwBest');
+    if(!N){ g.innerHTML=''; bt.textContent='Pick some players in step 1 to see when they are free.'; return; }
+    g.setAttribute('aria-label','How many of the '+N+' people are free, by day and time of day');
+    var h='<thead><tr><td></td>'+BLOCKS.map(function(bn){return '<th scope="col">'+bn.replace('Lunchtime','Lunch').replace('Afternoon','Aftn')+'</th>';}).join('')+'</tr></thead><tbody>';
+    var best=null;
+    DAYS.forEach(function(dn,d){
+      h+='<tr><th scope="row">'+dn+'</th>';
+      BLOCKS.forEach(function(bn,b){
+        var f=freeList(d,b).length; if(d<5&&(!best||f>best.f)) best={f:f,d:d,b:b};
+        var on=slot&&slot.d===d&&slot.b===b;
+        h+='<td><button type="button" data-d="'+d+'" data-b="'+b+'" style="--p:'+(f/N).toFixed(3)+'" aria-pressed="'+(on?'true':'false')+'" aria-label="'+dn+' '+bn+': '+f+' of '+N+' free. Pick this time">'+f+'</button></td>';
+      });
+      h+='</tr>';
+    });
+    g.innerHTML=h+'</tbody>';
+    if(best) bt.textContent='Best weekday time: '+DAYS[best.d]+' '+BLOCKS[best.b].toLowerCase()+', with '+best.f+' of '+N+' free.';
+    g.onclick=function(e){
+      var btn=e.target.closest?e.target.closest('button[data-d]'):null; if(!btn) return;
+      var d=+btn.getAttribute('data-d'), b=+btn.getAttribute('data-b'); slot={d:d,b:b};
+      var all=g.querySelectorAll('button[aria-pressed=true]'); for(var i=0;i<all.length;i++) all[i].setAttribute('aria-pressed','false');
+      btn.setAttribute('aria-pressed','true');
+      document.getElementById('adDay').value=DAYS[d]; document.getElementById('adTime').value=BLOCKS[b];
+      var fr=freeList(d,b), real=fr.filter(function(n){return n!=='You';});
+      if(document.getElementById('fwScope').value==='sel'){
+        adMsg('Picked '+DAYS[d]+' '+BLOCKS[b].toLowerCase()+': '+real.length+' of '+N+' selected players are free. Choose a type and tap Add to selected plans.');
+      } else {
+        SQUAD.forEach(function(n){ picked[n]=real.indexOf(n)>=0; }); syncChips();
+        adMsg('Picked '+DAYS[d]+' '+BLOCKS[b].toLowerCase()+': '+fr.length+' of '+N+' free, and the free players are selected. Choose a type and tap Add to selected plans.');
+      }
+    };
+  }
   function renderPlans(){
     loadPlans();
     var mp=document.getElementById('mbPlayer');
-    fillSquad(mp); buildWho();
+    fillSquad(mp); buildWho(); if(!setupBuilt) buildSetup(); tpPreview(); showMsg(); posBadge();
     var al=document.getElementById('adList'); al.innerHTML=''; var n=0;
     SQUAD.forEach(function(name){
       (plans[name]||[]).forEach(function(x){
@@ -5027,6 +5345,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
       });
     });
     document.getElementById('adEmpty').hidden=n>0;
+    document.getElementById('adSessSum').textContent='4. Sessions added ('+n+')';
     var ml=document.getElementById('mbList'); ml.innerHTML=''; var items=plans[mp.value]||[];
     items.forEach(function(x){ var li=document.createElement('li'); var lab=document.createElement('label'); lab.className='tickrow'; var cb=document.createElement('input'); cb.type='checkbox'; cb.checked=!!x.done;
       cb.addEventListener('change',function(){ x.done=cb.checked; x.doneAt=cb.checked?Date.now():null; savePlans(); renderPlans(); });
@@ -5043,6 +5362,31 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
     savePlans(); document.getElementById('adNote').value=''; renderPlans();
     adMsg('Added to '+who.length+(who.length===1?' plan.':' plans.'));
   });
+  document.getElementById('tpSel').addEventListener('change',tpPreview);
+  document.getElementById('tpAdd').addEventListener('click',function(){
+    if(!st||!st.admin) return; loadPlans();
+    var who=SQUAD.filter(function(x){return picked[x];}); if(!who.length){ adMsg('Pick at least one player first.'); return; }
+    var tpl=TEMPLATES[document.getElementById('tpSel').value]||[];
+    who.forEach(function(n){ tpl.forEach(function(b){ (plans[n]=plans[n]||[]).push({id:Date.now()+'-'+Math.floor(Math.random()*1e6), day:b[0], time:b[1], type:b[2], note:b[3]}); }); });
+    savePlans(); renderPlans(); adMsg('Added '+tpl.length+' sessions to '+who.length+(who.length===1?' plan.':' plans.'));
+  });
+  document.getElementById('msgPost').addEventListener('click',function(){
+    if(!st||!st.admin) return; var v=document.getElementById('msgText').value.trim().slice(0,160);
+    if(!v){ adMsg('Type a message first.'); return; }
+    try{ localStorage.setItem(MK,v); }catch(e){} document.getElementById('msgText').value=''; showMsg(); adMsg('Message posted to the squad.');
+  });
+  document.getElementById('msgClear').addEventListener('click',function(){ try{ localStorage.removeItem(MK); }catch(e){} showMsg(); adMsg('Message removed.'); });
+  document.getElementById('shBuild').addEventListener('click',function(){
+    var t=buildSummary(); document.getElementById('shText').value=t; document.getElementById('shBox').hidden=false;
+    document.getElementById('shWa').setAttribute('href','https://wa.me/?text='+encodeURIComponent(t));
+    document.getElementById('shMsg').hidden=true;
+  });
+  document.getElementById('shCopy').addEventListener('click',function(){
+    var ta=document.getElementById('shText'), m=document.getElementById('shMsg');
+    function done(ok){ m.textContent=ok?'Copied. Paste it into your group chat.':'Could not copy. Press and hold the text to copy it.'; m.hidden=false; }
+    try{ if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(ta.value).then(function(){done(true);},function(){ ta.select(); done(false); }); return; } }catch(e){}
+    try{ ta.select(); done(document.execCommand('copy')); }catch(e){ done(false); }
+  });
   window.LLClub=function(em,pw){ var e=document.getElementById('clEmail'), p=document.getElementById('clPass'); e.value=em; p.value=pw; document.getElementById('clForm').dispatchEvent(new Event('submit',{cancelable:true})); p.value=''; e.value=''; return !!st; };
   document.getElementById('mbPlayer').addEventListener('change',renderPlans);
   document.getElementById('fxAdd').addEventListener('click',function(){
@@ -5053,16 +5397,30 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
     document.getElementById('fxOpp').value=''; renderPlans(); adMsg('Fixture added.');
   });
   document.getElementById('chTitle').addEventListener('input',function(){ try{ localStorage.setItem(CH,this.value.trim().slice(0,50)); }catch(e){} document.getElementById('mbBoardTitle').textContent=chTitle(); });
+  document.getElementById('cfSport').addEventListener('change',function(){
+    setup={sport:this.value,pos:defaultPos(this.value)}; saveSetup(); buildSetup(); adMsg('Sport changed to '+this.value+'. Check each player\u2019s position group.');
+  });
+  document.getElementById('fwScope').addEventListener('change',buildFree);
+  document.getElementById('fwMine').addEventListener('change',buildFree);
+  document.getElementById('adPos').addEventListener('click',function(){
+    if(!st||!st.admin) return; loadPlans();
+    var who=SQUAD.filter(function(x){return picked[x];}); if(!who.length){ adMsg('Pick at least one player first.'); return; }
+    var day=document.getElementById('adDay').value, time=document.getElementById('adTime').value;
+    who.forEach(function(n){ var x=POSSESS[setup.sport][setup.pos[n]]; if(!x) return;
+      (plans[n]=plans[n]||[]).push({id:Date.now()+'-'+Math.floor(Math.random()*1e6), day:day, time:time, type:x[0], note:x[1]}); });
+    savePlans(); renderPlans(); adMsg('Added a position session on '+day+' '+time.toLowerCase()+' for '+who.length+(who.length===1?' player.':' players.'));
+  });
   document.getElementById('exLoad').addEventListener('click',function(){
     if(!st||!st.admin) return; loadPlans(); loadFx();
     var base=[['Mon','Morning','Gym','Lower body'],['Wed','Lunchtime','Run','Easy 5k'],['Fri','Afternoon','Gym','Upper body']];
     SQUAD.forEach(function(n,pi){ plans[n]=base.map(function(b,i){ var done=((pi*7+i*3)%4)!==0; return {id:'ex-'+n+'-'+i,day:b[0],time:b[1],type:b[2],note:b[3],done:done,doneAt:done?Date.now():null}; }); });
     savePlans();
     if(!fixtures.length){ var d=new Date(); d.setDate(d.getDate()+((6-d.getDay()+7)%7||7)); fixtures.push({id:'ex-fx',opp:'Cardiff Uni 2nds',date:d.toISOString().slice(0,10)}); saveFx(); }
+    if(!getMsg()){ try{ localStorage.setItem(MK,'Pitch session moved to 6pm on Thursday. Bring both kits.'); }catch(e){} }
     renderPlans(); adMsg('Example data loaded.');
   });
   document.getElementById('exReset').addEventListener('click',function(){
-    if(!st||!st.admin) return; plans={}; fixtures=[]; savePlans(); saveFx(); try{ localStorage.removeItem(CH); }catch(e){} renderPlans(); adMsg('Club data cleared.');
+    if(!st||!st.admin) return; plans={}; fixtures=[]; savePlans(); saveFx(); try{ localStorage.removeItem(CH); localStorage.removeItem(MK); localStorage.removeItem(SK); }catch(e){} buildSetup(); renderPlans(); adMsg('Club data cleared.');
   });
   var list=document.getElementById('clDemo');
   DEMO.forEach(function(d,i){
@@ -5083,6 +5441,14 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
   });
   document.getElementById('clColour').addEventListener('input',function(){ if(!st) return; st.c=this.value; save(); apply(); });
   document.getElementById('clLeave').addEventListener('click',function(){ st=null; save(); apply(); });
+  var tryBtn=document.getElementById('clTry');
+  if(tryBtn) tryBtn.addEventListener('click',function(){
+    var d=DEMO[1]; st={name:d.name,c:d.c,mono:!!d.mono,admin:true}; save(); apply();
+    var ex=document.getElementById('exLoad'); if(ex) ex.click();
+    var ad=document.getElementById('clubAdmin'); if(ad&&ad.scrollIntoView) ad.scrollIntoView();
+  });
+  var shr=document.getElementById('clShare');
+  if(shr) shr.setAttribute('href','https://wa.me/?text='+encodeURIComponent('Found a free planner that fits training around lectures, and it has a club mode for squads: https://lecturelift.co.uk/#club'));
   load(); apply();
 })();
 </script>
