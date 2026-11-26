@@ -25,7 +25,7 @@ try{
    plus.links     your two Stripe Payment Links.   plus.portal = Stripe customer portal login link (lets people cancel). */
 window.LL_CONFIG = window.LL_CONFIG || {
   accounts: { mode: 'supabase', url: 'https://iyztarsybpxyaqwicyni.supabase.co', anonKey: 'sb_publishable_pJUM7YkcC2IKWuxA0CxEBA_AGtXN2fN' },
-  plus: { mode: 'preview', links: { monthly: '', yearly: '' }, portal: '' }
+  plus: { mode: 'preview', links: { monthly: 'https://buy.stripe.com/test_aFa3cw2zeeuC70qacD1oI00', yearly: 'https://buy.stripe.com/test_00w4gA0r61HQ84u0C31oI01' }, portal: 'https://billing.stripe.com/p/login/test_aFa3cw2zeeuC70qacD1oI00' }
 };
 /* LectureLift accounts layer (Supabase, no SDK needed). Now built into the site, switched off until LL_CONFIG is filled in.
    mode 'local'    = today's behaviour: nothing happens, the site keeps its device-only profile.
@@ -1881,7 +1881,8 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
     <h2>Cancellation and refunds</h2>
     <p id="termsRefIntro">Plus payments are not open yet. This is how cancelling and refunds will work when they open.</p>
     <p><strong>Cancelling.</strong> You can cancel Plus at any time from My space, using Manage subscription. Cancelling stops the next payment. You keep Plus until the end of the period you have already paid for, then your account goes back to the free version. Your plans and saved weeks stay.</p>
-    <p><strong>14-day refund.</strong> If you change your mind, you can ask for a full refund within 14 days of your first payment. Email <a href="mailto:hello@lecturelift.co.uk">hello@lecturelift.co.uk</a> with the email address on your account. We will refund you within 14 days of agreeing to it, to the card you paid with.</p>
+    <p><strong>Free trial.</strong> Plus starts with a 14-day free trial. You give your card details to start it, but nothing is taken during the trial. If you cancel before the trial ends, you are not charged. If you do not cancel, the trial turns into the paid plan you picked and the first payment is taken when the trial ends.</p>
+    <p><strong>14-day refund.</strong> If you change your mind, you can ask for a full refund within 14 days of your first payment (the first payment after any free trial). Email <a href="mailto:hello@lecturelift.co.uk">hello@lecturelift.co.uk</a> with the email address on your account. We will refund you within 14 days of agreeing to it, to the card you paid with.</p>
     <p><strong>After 14 days.</strong> We do not refund part-used months or years, but you can still cancel so you are not charged again. If something went wrong, such as a double charge or Plus not switching on after you paid, email us and we will put it right.</p>
     <p><strong>Renewals.</strong> Monthly plans renew every month and yearly plans every year, at the price shown when you signed up, until you cancel. Stripe emails you a receipt each time. If we change the price, we will tell you before your next payment.</p>
     <p><strong>Free version.</strong> The free planner stays free and does not need an account.</p>
@@ -2086,10 +2087,10 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
       </div>
       <dl class="plan-dl" id="coSummary"></dl>
       <p class="plan-note" id="coNote"></p>
-      <label class="per" id="coAgreeRow" hidden style="margin:.25rem 0 .9rem; font-weight:500"><input type="checkbox" id="coAgree" style="margin-top:.25rem"> <span>I agree to the <a href="#terms">Terms</a> and I want Plus to start straight away. I know I can cancel any time and ask for a full refund within 14 days of my first payment.</span></label>
+      <label class="per" id="coAgreeRow" hidden style="margin:.25rem 0 .9rem; font-weight:500"><input type="checkbox" id="coAgree" style="margin-top:.25rem"> <span>I agree to the <a href="#terms">Terms</a> and I want Plus to start straight away. I know the 14-day free trial turns into the paid plan unless I cancel before it ends, and that I can cancel any time and ask for a full refund within 14 days of my first payment.</span></label>
       <p class="status" id="coAgreeMsg" role="alert"></p>
       <button type="button" class="btn" id="coPay" disabled aria-disabled="true">Payments open soon</button>
-      <p class="plan-note" id="coPolicy">Cancel any time. Full refund within 14 days of your first payment. See <a href="#terms">Cancellation and refunds</a> in the Terms.</p>
+      <p class="plan-note" id="coPolicy">14-day free trial first, cancel any time. Full refund within 14 days of your first payment. See <a href="#terms">Cancellation and refunds</a> in the Terms.</p>
       <p class="plan-note" id="coFree" style="margin-top:1rem">Plus is free to try now on the <a href="#plus">Plus page</a>. When payments open, you’ll be able to cancel any time. Want to know when? <a href="#join">Join the early list</a>.</p>
       <p class="plan-note">Buying for a team? See the <a href="#pricing">club plans</a>: £30 a month covers up to 30 players, and Club+ adds just 75p a month for each player after the first 30.</p>
     </div>
@@ -2283,7 +2284,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
     </details>
     <details>
       <summary>Can I cancel Plus or get a refund?</summary>
-      <p>Yes, once payments open. You can cancel any time and keep Plus until the end of what you have paid for. If you change your mind, you can ask for a full refund within 14 days of your first payment. The details are in the <a href="#terms">Terms</a>.</p>
+      <p>Yes, once payments open. Plus starts with a 14-day free trial, and if you cancel before it ends you are not charged. You can cancel any time and keep Plus until the end of what you have paid for. If you change your mind, you can ask for a full refund within 14 days of your first payment. The details are in the <a href="#terms">Terms</a>.</p>
     </details>
     <details>
       <summary>Is there a plan for clubs and teams?</summary>
@@ -5340,7 +5341,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
     faqFree: 'The planner is free to use. Plus (extra programmes, saved weeks, reminders and progress tracking) costs £2.99 a month or £19.99 a year, and you can cancel any time from your account page. See the Pricing page for the details.',
     homePlus: 'See Plus',
     prSub: 'Everything in Free, plus extras that make it easier to stay consistent. Pay by card on Stripe’s secure page and cancel any time.',
-    prNote: 'Full refund within 14 days of your first payment. Features and price may change based on what students tell us.',
+    prNote: 'Starts with a 14-day free trial: cancel before it ends and you are not charged. Full refund within 14 days of your first payment. Features and price may change based on what students tell us.',
     termsPlus: 'Plus costs £2.99 a month or £19.99 a year and is paid by card through Stripe. Club and Club+ are still previews and no payment is taken for them. Features and prices may change, and we will never charge you without clearly telling you first and getting your agreement. See Cancellation and refunds below.'
   };
   if (live){
