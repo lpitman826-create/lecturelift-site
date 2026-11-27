@@ -25,7 +25,9 @@ try{
    plus.links     your two Stripe Payment Links.   plus.portal = Stripe customer portal login link (lets people cancel). */
 window.LL_CONFIG = window.LL_CONFIG || {
   accounts: { mode: 'supabase', url: 'https://iyztarsybpxyaqwicyni.supabase.co', anonKey: 'sb_publishable_pJUM7YkcC2IKWuxA0CxEBA_AGtXN2fN' },
-  plus: { mode: 'preview', links: { monthly: 'https://buy.stripe.com/test_aFa3cw2zeeuC70qacD1oI00', yearly: 'https://buy.stripe.com/test_00w4gA0r61HQ84u0C31oI01' }, portal: 'https://billing.stripe.com/p/login/test_aFa3cw2zeeuC70qacD1oI00' }
+  plus: { mode: 'preview', links: { monthly: 'https://buy.stripe.com/test_aFa3cw2zeeuC70qacD1oI00', yearly: 'https://buy.stripe.com/test_00w4gA0r61HQ84u0C31oI01' }, portal: 'https://billing.stripe.com/p/login/test_aFa3cw2zeeuC70qacD1oI00',
+    /* Founding member price for early customers. Off until BOTH Stripe links below are filled in. 'until' is optional (YYYY-MM-DD). The price text must match the Stripe price. */
+    founding: { monthly: '', yearly: '', until: '', links: { monthly: '', yearly: '' } } }
 };
 /* LectureLift accounts layer (Supabase, no SDK needed). Now built into the site, switched off until LL_CONFIG is filled in.
    mode 'local'    = today's behaviour: nothing happens, the site keeps its device-only profile.
@@ -184,6 +186,13 @@ window.LL_CONFIG = window.LL_CONFIG || {
   function session(){ return window.LLAccounts && LLAccounts.session ? LLAccounts.session() : null; }
   function live(){ return CFG.mode === 'supabase' && !!window.LLAccounts && LLAccounts.enabled() && !!CFG.links.monthly && !!CFG.links.yearly; }
   function signedIn(){ return document.documentElement.classList.contains('signedin'); }
+  // Founding member price: shown only while it is configured, in date, and payments are live.
+  function founding(){
+    var F = C.founding || {}, L = F.links || {};
+    var configured = !!(L.monthly && L.yearly && F.monthly && F.yearly);
+    var inDate = !F.until || Date.now() < new Date(F.until + 'T23:59:59').getTime();
+    return { configured: configured, active: configured && inDate && live(), monthly: F.monthly || '', yearly: F.yearly || '', until: F.until || '' };
+  }
 
   function isPlus(){
     if (!live()) return signedIn();
@@ -214,7 +223,8 @@ window.LL_CONFIG = window.LL_CONFIG || {
   function startCheckout(plan){
     var s = session();
     if (!s){ location.hash = '#login'; return; }
-    var u = new URL(CFG.links[plan === 'yearly' ? 'yearly' : 'monthly']);
+    var key = plan === 'yearly' ? 'yearly' : 'monthly', fo = founding();
+    var u = new URL(fo.active ? C.founding.links[key] : CFG.links[key]);
     u.searchParams.set('client_reference_id', s.userId);
     if (s.email) u.searchParams.set('prefilled_email', s.email);
     location.href = u.toString();
@@ -242,7 +252,7 @@ window.LL_CONFIG = window.LL_CONFIG || {
     return function(){ stopped = true; };
   }
 
-  window.LLPlus = { config: CFG, live: live, isPlus: isPlus, info: info, refresh: refresh, startCheckout: startCheckout, portalUrl: portalUrl, confirmAfterPayment: confirmAfterPayment };
+  window.LLPlus = { config: CFG, founding: founding, live: live, isPlus: isPlus, info: info, refresh: refresh, startCheckout: startCheckout, portalUrl: portalUrl, confirmAfterPayment: confirmAfterPayment };
 })();
 
 (function(){
@@ -342,6 +352,14 @@ button.c.e:hover{background:var(--lecture)}
 .plusbar{display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:.4rem .8rem; margin:.2rem 0 1rem; padding:.55rem 1rem; border-radius:2rem; background:linear-gradient(90deg, color-mix(in srgb, var(--accent) 16%, var(--surface)), color-mix(in srgb, var(--accent) 6%, var(--surface))); border:1px solid color-mix(in srgb, var(--accent) 35%, var(--line)); font-size:.92rem; color:var(--ink)}
 .plusbar[hidden],.plusbar[data-gone]{display:none}
 :root:not(.signedin):has(#view-home:not([hidden])) .plusbar{display:none}
+.plusnudge{position:fixed; left:.75rem; right:.75rem; bottom:calc(.75rem + env(safe-area-inset-bottom)); max-width:30rem; margin:0 auto; z-index:60; background:var(--surface); color:var(--ink); border:1px solid var(--line); border-left:5px solid var(--accent); border-radius:1rem; padding:1rem 1.1rem; box-shadow:0 18px 40px -12px rgba(20,30,70,.45)}
+.plusnudge[hidden]{display:none}
+.plusnudge .pn-t{font-weight:700; margin:0}
+.plusnudge .pn-x{margin:.3rem 0 .8rem; color:var(--muted); font-size:.95rem}
+.plusnudge .pn-b{display:flex; gap:.6rem; flex-wrap:wrap}
+.plusnudge .pn-b .btn{flex:1 1 9rem; min-height:44px; justify-content:center; text-align:center}
+.plus-locked{opacity:.55; cursor:not-allowed}
+select.plus-locked,input.plus-locked[type=checkbox]{pointer-events:none}
 .clubline{margin:.9rem 0 0; font-size:.95rem; color:var(--muted)}
 .clubline a{font-weight:600}
 .chip[data-today]::after{content:' today'; font-size:.68em; font-weight:600; opacity:.85}
@@ -1921,6 +1939,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
     <p id="termsRefIntro">Plus payments are not open yet. This is how cancelling and refunds will work when they open.</p>
     <p><strong>Cancelling.</strong> You can cancel Plus at any time from My space, using Manage subscription. Cancelling stops the next payment. You keep Plus until the end of the period you have already paid for, then your account goes back to the free version. Your plans and saved weeks stay.</p>
     <p><strong>Free trial.</strong> Plus starts with a 14-day free trial. You give your card details to start it, but nothing is taken during the trial. If you cancel before the trial ends, you are not charged. If you do not cancel, the trial turns into the paid plan you picked and the first payment is taken when the trial ends.</p>
+    <p id="termsFounding" hidden><strong>Founding member price.</strong> Some early members subscribe at a lower founding member price. If you do, you keep that price for as long as your subscription continues without a break, and we will not raise it during that time. If you cancel and come back later, the price on offer at that time applies. We can close the founding offer to new members at any time.</p>
     <p><strong>14-day refund.</strong> If you change your mind, you can ask for a full refund within 14 days of your first payment (the first payment after any free trial). Email <a href="mailto:hello@lecturelift.co.uk">hello@lecturelift.co.uk</a> with the email address on your account. We will refund you within 14 days of agreeing to it, to the card you paid with.</p>
     <p><strong>After 14 days.</strong> We do not refund part-used months or years, but you can still cancel so you are not charged again. If something went wrong, such as a double charge or Plus not switching on after you paid, email us and we will put it right.</p>
     <p><strong>Renewals.</strong> Monthly plans renew every month and yearly plans every year, at the price shown when you signed up, until you cancel. Stripe emails you a receipt each time. If we change the price, we will tell you before your next payment.</p>
@@ -4056,18 +4075,47 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
     function paintLocks(){
       var on=plusLocked(), bar=el('plusLock');
       if(bar){ bar.hidden=!on; }
-      LOCKED_IDS.forEach(function(id){ var x=el(id); if(x){ x.disabled=on; if(on){ x.setAttribute('aria-disabled','true'); } else { x.removeAttribute('aria-disabled'); } } });
+      LOCKED_IDS.forEach(function(id){ var x=el(id); if(x){ x.classList.toggle('plus-locked',on); if(on){ x.setAttribute('aria-disabled','true'); if(x.tagName==='INPUT'&&x.type==='text'){ x.readOnly=true; } } else { x.removeAttribute('aria-disabled'); if(x.tagName==='INPUT'&&x.type==='text'){ x.readOnly=false; } } } });
+      if(!on) hideNudge();
       progInfo();
     }
+    // The friendly message when someone reaches for a Plus feature.
+    var NUDGE_FOR={gymProg:'Ready-made programmes',runProg:'Ready-made programmes',wkName:'Saved weeks',wkSave:'Saved weeks',remMins:'Calendar reminders',remRepeat:'Calendar reminders',icsBtn:'Calendar reminders',icsCopy:'Calendar reminders',finishWeek:'Progress tracking',pgReset:'Progress tracking'};
+    var nudgeFrom=null;
+    function hideNudge(){ var n=el('plusNudge'); if(n&&!n.hidden){ n.hidden=true; if(nudgeFrom&&nudgeFrom.focus){ try{ nudgeFrom.focus({preventScroll:true}); }catch(x){} } nudgeFrom=null; } }
+    function showNudge(feature,from){
+      var n=el('plusNudge'); if(!n) return;
+      var fo=(window.LLPlus&&window.LLPlus.founding)?window.LLPlus.founding():{active:false};
+      el('pnTitle').textContent=feature+' is part of Plus';
+      el('pnTxt').textContent='Try Plus free for 14 days. Nothing is taken during the trial and you can cancel any time.'+(fo.active?' Founding members pay '+fo.monthly+' a month and keep that price while they stay subscribed.':'');
+      nudgeFrom=from||null; n.hidden=false;
+      try{ el('pnGo').focus({preventScroll:true}); }catch(x){}
+    }
+    function lockedHit(t){
+      if(!t||!t.closest) return null;
+      var c=t.closest('#wkSave,#wkList [data-act],#icsBtn,#icsCopy,#finishWeek,#pgReset'); if(c) return c;
+      var lab=t.closest('label'); if(lab){ var inner=lab.querySelector('#gymProg,#runProg,#remMins,#remRepeat'); if(inner) return inner; }
+      if(t.id==='wkName') return t;
+      return null;
+    }
+    function featureOf(x){ if(x.id&&NUDGE_FOR[x.id]) return NUDGE_FOR[x.id]; if(x.closest&&x.closest('#wkList')) return 'Saved weeks'; return 'This feature'; }
     document.addEventListener('click',function(e){
+      var nn=el('plusNudge');
+      if(nn&&!nn.hidden){ if(e.target.closest&&e.target.closest('#pnNo')){ hideNudge(); return; } if(e.target.closest&&e.target.closest('#pnGo')){ nudgeFrom=null; nn.hidden=true; return; } }
       if(!plusLocked()) return;
-      var t=e.target&&e.target.closest?e.target.closest('#wkSave,#wkList [data-act],#icsBtn,#icsCopy,#finishWeek,#pgReset'):null;
-      if(!t) return;
+      var t=lockedHit(e.target); if(!t) return;
       e.preventDefault(); e.stopImmediatePropagation();
-      var bar=el('plusLock'); if(bar){ bar.hidden=false; try{ bar.scrollIntoView({block:'center'}); }catch(x){} }
+      showNudge(featureOf(t),t);
+    },true);
+    document.addEventListener('keydown',function(e){
+      if(e.key==='Escape'){ hideNudge(); return; }
+      if(!plusLocked()) return;
+      var t=e.target; if(!t||!t.id||!/^(gymProg|runProg|remMins)$/.test(t.id)) return;
+      if(['Enter',' ','ArrowUp','ArrowDown'].indexOf(e.key)<0) return;
+      e.preventDefault(); showNudge(featureOf(t),t);
     },true);
     document.addEventListener('ll-plus-changed',paintLocks);
-    window.addEventListener('hashchange',paintLocks);
+    window.addEventListener('hashchange',function(){ hideNudge(); paintLocks(); });
     paintLocks();
     var finishBtn=el('finishWeek');
     if(finishBtn){
@@ -5052,17 +5100,22 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
     bm.setAttribute('aria-pressed', plan==='monthly'); by.setAttribute('aria-pressed', plan==='yearly');
     var liveNow=!!(window.LLPlus && window.LLPlus.live && window.LLPlus.live());
     var pay=document.getElementById('coPay'); if(pay){ pay.setAttribute('data-plan',plan); }
+    var fo=(window.LLPlus&&window.LLPlus.founding)?window.LLPlus.founding():{active:false};
+    var today=liveNow?'£0.00 today (14-day free trial)':'£0.00 (preview)';
+    bm.textContent=fo.active?('Monthly '+fo.monthly):'Monthly £2.99'; by.textContent=fo.active?('Yearly '+fo.yearly):'Yearly £19.99';
     if(plan==='monthly'){
-      sum.innerHTML=row('Plan','Plus, monthly')+row('Price','£2.99 a month')+row('Due today',liveNow?'£2.99':'£0.00 (preview)');
-      note.textContent='Renews monthly. Cancel any time.';
+      sum.innerHTML=row('Plan','Plus, monthly')+row('Price',fo.active?(fo.monthly+' a month, founding member price (usually £2.99)'):'£2.99 a month')+row('Due today',today);
+      note.textContent=fo.active?'Founding member price: you keep it for as long as your subscription continues without a break. Renews monthly. Cancel any time.':'Renews monthly. Cancel any time.';
     } else {
-      sum.innerHTML=row('Plan','Plus, yearly')+row('Price','£19.99 a year (about £1.67 a month)')+row('Due today',liveNow?'£19.99':'£0.00 (preview)');
-      note.textContent='Renews yearly. Saves about £15.89 a year compared with paying monthly.';
+      sum.innerHTML=row('Plan','Plus, yearly')+row('Price',fo.active?(fo.yearly+' a year, founding member price (usually £19.99)'):'£19.99 a year (about £1.67 a month)')+row('Due today',today);
+      note.textContent=fo.active?'Founding member price: you keep it for as long as your subscription continues without a break. Renews yearly. Cancel any time.':'Renews yearly. Saves about £15.89 a year compared with paying monthly.';
     }
   }
   bm.addEventListener('click',function(){ plan='monthly'; draw(); });
   by.addEventListener('click',function(){ plan='yearly'; draw(); });
   draw();
+  document.addEventListener('ll-plus-changed',draw); window.addEventListener('hashchange',function(){ if(location.hash==='#checkout') draw(); });
+  setTimeout(draw,600);
   var bar=document.getElementById('plusBar');
   function bh(){ if(bar) bar.hidden=(location.hash==='#checkout'); }
   window.addEventListener('hashchange',bh); bh();
@@ -5769,7 +5822,9 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
     document.documentElement.classList.add('plus-live');
     Object.keys(COPY).forEach(function(id){ var e = $(id); if (e) e.textContent = COPY[id]; });
     hide('plusSoon', true); hide('prSoon', true); hide('termsRefIntro', true);
-    var bt = $('plusBarTxt'); if (bt && !/^Club mode/.test(bt.textContent)) bt.textContent = 'Get Plus from £2.99 a month.';
+    var bt = $('plusBarTxt'); var fo = P.founding ? P.founding() : { active: false };
+    if (bt && !/^Club mode/.test(bt.textContent)) bt.textContent = fo.active ? ('Founding member price: Plus from ' + fo.monthly + ' a month.') : 'Get Plus from £2.99 a month.';
+    if (fo.configured) hide('termsFounding', false);
     hide('coAgreeRow', false);
     var agBox = $('coAgree'); if (agBox){ agBox.addEventListener('change', function(){ var am = $('coAgreeMsg'); if (am && agBox.checked) am.textContent = ''; }); }
     var pay = $('coPay');
@@ -5980,5 +6035,10 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
   });
 })();
 </script>
+  <div class="plusnudge" id="plusNudge" hidden role="dialog" aria-labelledby="pnTitle" aria-describedby="pnTxt">
+    <p class="pn-t" id="pnTitle"></p>
+    <p class="pn-x" id="pnTxt"></p>
+    <div class="pn-b"><a class="btn" id="pnGo" href="#checkout">Try Plus free</a><button type="button" class="btn alt" id="pnNo">Not now</button></div>
+  </div>
 </body>
 </html>
