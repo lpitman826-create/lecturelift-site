@@ -953,7 +953,7 @@ button:active,.chip:active,.btn:active{transform:scale(.97)}
 .fbrand strong{font-size:1.1rem; color:var(--ink)}
 .fbrand p{margin:.3rem 0 .6rem; max-width:18rem}
 .fcol{display:grid; gap:.45rem; align-content:start}
-.sitefoot h4{margin:0 0 .3rem; font-size:.8rem; text-transform:uppercase; letter-spacing:.08em; color:var(--ink)}
+.sitefoot h4{margin:0 0 .3rem; font-size:.86rem; text-transform:uppercase; letter-spacing:.08em; color:var(--ink)}
 .fcol a{color:var(--muted); text-decoration:none; font-size:.92rem; width:fit-content}
 .fcol a:hover{color:var(--accent); text-decoration:underline; text-underline-offset:3px}
 .fsmall{margin:2rem 0 0; padding-top:1.2rem; border-top:1px solid var(--line); font-size:.85rem; color:var(--muted)}
@@ -1226,7 +1226,7 @@ section.cta .btn-row{margin-top:.2rem}
 :root{--link:color-mix(in srgb, var(--accent) 80%, var(--ink))}
 main a:not(.btn):not(.chip):not(.fcard){color:var(--link)}
 .fcard .go,.det summary,.restbtn{color:var(--link)}
-.soon,.pill{color:var(--link); font-size:.78rem}
+.soon,.pill{color:var(--link); font-size:.86rem}
 .ctabanner{background:radial-gradient(120% 140% at 100% 0%, color-mix(in srgb, #ffffff 20%, transparent), transparent 55%), linear-gradient(135deg, color-mix(in srgb, var(--accent) 86%, var(--ink)), color-mix(in srgb, var(--accent) 58%, #8a5cf6))}
 .ctabanner p{opacity:1}
 :root[data-accent="orange"]{--accent:#b45309}
@@ -1348,14 +1348,15 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
   .exhead{min-height:44px}
   button.lnk{min-height:44px}
   .plusbar a{position:relative}
-  .plusbar a::after{content:''; position:absolute; inset:-8px -4px}
+  .plusbar a::after{content:''; position:absolute; inset:-6px -3px -14.5px}
   .mvbtn,.nudge .nx{min-height:44px}
   .tick input{width:1.5rem; height:1.5rem; margin-top:.1rem}
   label.tick{min-height:44px; align-items:center}
   a.brand{min-height:44px; display:inline-flex; align-items:center}
   a.cta,.ah-btn{min-height:44px}
+  .authlinks a{min-height:44px; display:inline-flex; align-items:center}
   .plusbar .pbx{position:relative; min-height:0; height:2rem}
-  .plusbar .pbx::after{content:''; position:absolute; inset:-8px -6px}
+  .plusbar .pbx::after{content:''; position:absolute; inset:-6px -8px -11px}
   select,.footact,.igfoot{min-height:44px}
   .igfoot{display:inline-flex; align-items:center}
   summary{min-height:44px; display:flex; align-items:center}
@@ -1364,6 +1365,18 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
   input[type=checkbox]{min-width:1.4rem; min-height:1.4rem}
   #clubAdmin button,.adrow button,#clDemo button,li > button:not(.mvbtn){min-height:44px}
   .fcol a,.sitefoot .fcol a{display:flex; align-items:center; min-height:44px}
+}
+/* Printing or saving as PDF: just the page itself, plain black on white */
+@media print{
+  @page{margin:14mm}
+  :root{color-scheme:light!important}
+  html,body{background:#fff!important; color:#000!important}
+  header,.skip,.plusbar,.sitefoot,.toast,.llt,.backlink,.quickbar,.lechint{display:none!important}
+  *,*::before,*::after{background:transparent!important; color:#000!important; box-shadow:none!important; text-shadow:none!important; animation:none!important; transition:none!important}
+  .js .reveal{opacity:1!important; transform:none!important}
+  .wrap{max-width:none; padding:0}
+  .pcard,.plan-card,.excard,.band,li{break-inside:avoid}
+  h1,h2,h3,h4{break-after:avoid}
 }
 </style>
 </head>
@@ -1772,6 +1785,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
     <h1 class="about-h1">Contact</h1>
     <p class="lede">Questions, feedback or ideas? I read everything, and I aim to reply within a few days.</p>
   </div>
+  <h2 class="vh">Ways to get in touch</h2>
   <div class="pgrid">
     <div class="pcard">
       <h3><i class="ib" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></i>Feedback and questions</h3>
@@ -2032,6 +2046,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
       <li><b>3</b><span>Add sessions and a message. Players tick them off.</span></li>
     </ol>
   </div>
+  <h2 class="vh">Club mode</h2>
   <div class="auth">
     <div class="pcard" id="clubOut">
       <h3>Try club mode</h3>
@@ -2238,6 +2253,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
     <h1 class="about-h1">Get Plus</h1>
     <p class="lede" id="coLede">This is a preview of how paying will look. Nothing is charged and no card details are asked for.</p>
   </div>
+  <h2 class="vh">Payment</h2>
   <div class="plans">
     <div class="plan-card plus">
       <h3>Choose how to pay</h3>
@@ -2276,6 +2292,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
   <div class="inst">
     <p class="wndate">28 November 2026</p>
     <ul class="wnlist">
+      <li><strong>Cleaner printing</strong><span>If you print a page or save it as a PDF, you now get just the page itself in plain black on white, without the menu, banners and footer.</span></li>
       <li><strong>Easier to send feedback</strong><span>There is now a Send feedback button in the footer on every page, and a Captain or coach card on the club page. Both open an email with a few short questions, so it takes a minute to tell me what is missing.</span></li>
       <li><strong>Back-to-top arrow stays out of the way</strong><span>The arrow now appears only when you scroll up, so it no longer sits over the text you are reading. The Pricing page button for clubs now says Try club mode.</span></li>
       <li><strong>Club mode keeps the normal colours</strong><span>The example club no longer turns the site black and white. It uses the usual LectureLift colours, and you can still pick your own club colour.</span></li>
@@ -2560,6 +2577,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
     <a class="btn" href="#checkout">Get Plus</a>
   </div>
   <div class="exbanner" id="plusLock" hidden role="status"><p><strong>These are Plus features.</strong> Ready-made programmes, saved weeks, calendar reminders, progress tracking and the full exercise library come with Plus. The planner, simple sessions, the core library, With a mate and the backup code stay free.</p><a class="btn" href="#checkout">Get Plus</a></div>
+  <h2 class="vh">What Plus includes</h2>
   <div class="pgrid">
     <div class="pcard">
       <h3><i class="ib" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></i>Ready-made programmes</h3>
@@ -2656,6 +2674,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
     <div class="ah-ring" id="appRing"></div>
   </section>
 
+  <h2 class="vh">Your week and progress</h2>
   <div class="celebrate" id="appCelebrate" role="status" hidden></div>
 
   <section class="pcard welcome" id="appWelcome" aria-labelledby="appWelH" hidden>
@@ -2794,6 +2813,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
     <h1 class="about-h1">Your LectureLift account</h1>
     <p class="lede" id="authLede">Create a profile to get your own space with today’s sessions, your week and your progress. It’s saved on this device only for now. Accounts that work on every device are still being built.</p>
   </div>
+  <h2 class="vh">Log in or create an account</h2>
   <div class="auth">
     <div class="chips" role="group" aria-label="Log in or sign up">
       <button type="button" class="chip" id="tabLogin" data-tab="login" aria-pressed="true">Log in</button>
@@ -2915,6 +2935,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
     <p class="lede" id="prLede">Built with a student budget in mind. The planner is free, and a few extras will be paid. Plus is planned at £2.99 a month, and it’s free to try while we test it. Clubs and teams pay less per player. Tell us if that feels fair.</p>
     <a class="btn" href="#checkout">Get Plus</a>
   </div>
+  <h2 class="vh">Our plans</h2>
   <div class="plans">
     <div class="plan-card">
       <h3>Free</h3>
