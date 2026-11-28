@@ -420,6 +420,14 @@ details.adsec .adbody>h4:first-child{margin-top:0}
 .clubdemo li{display:flex; flex-wrap:wrap; gap:.2rem .6rem; align-items:center}
 .clubdemo .sw{width:.9rem; height:.9rem; border-radius:50%; flex:none; border:1px solid var(--line)}
 .clubdemo code{background:var(--surface); padding:.1rem .4rem; border-radius:.4rem}
+.clsteps{list-style:none; margin:1.1rem 0 0; padding:0; display:grid; gap:.6rem; grid-template-columns:repeat(auto-fit,minmax(13rem,1fr))}
+.clsteps li{display:flex; gap:.7rem; align-items:flex-start; padding:.8rem .9rem; border:1px solid var(--line); border-radius:1rem; background:var(--surface); font-size:.92rem; line-height:1.4}
+.clsteps b{flex:none; width:1.7rem; height:1.7rem; border-radius:50%; background:var(--accent); color:var(--accent-ink); display:grid; place-items:center; font-size:.85rem}
+.clmono{display:inline-grid; place-items:center; width:2.3rem; height:2.3rem; border-radius:50%; margin-right:.65rem; font-size:1rem; vertical-align:middle; border:1px solid var(--line)}
+.bigtry{display:grid; gap:.6rem; grid-template-columns:repeat(auto-fit,minmax(13rem,1fr)); margin:.4rem 0 .6rem}
+.bigtry .btn{width:100%; text-align:center}
+details.cllogin{margin-top:1.2rem; border-top:1px solid var(--line); padding-top:.4rem}
+details.cllogin > summary{cursor:pointer; font-weight:600; min-height:44px; display:flex; align-items:center}
 .clubdemo button{font:inherit; font-size:.8rem; padding:.2rem .7rem; border-radius:2rem; border:1px solid var(--line); background:var(--surface); color:var(--ink); cursor:pointer}
 #clubAdmin ul,#clubCoach ul{list-style:none; margin:.6rem 0 0; padding:0; display:grid; gap:.5rem}
 #clubAdmin li,#clubCoach li{padding:.6rem .8rem; border:1px solid var(--line); border-radius:.8rem; background:var(--bg); font-size:.92rem; display:flex; flex-wrap:wrap; gap:.3rem .6rem; align-items:center; justify-content:space-between}
@@ -1425,7 +1433,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
       <p class="lede pub">Simple, affordable workout plans for students, built around your timetable, your budget, and your goals.</p>
       <div class="btnrow pub"><a class="btn go" href="#planner">Try the planner</a><a class="btn alt" href="#signup" data-view="signup">Make a free account</a></div>
       <ul class="trust pub" aria-label="Why students use it"><li>Free to use</li><li>No account needed</li><li>Works on your phone</li></ul>
-      <p class="clubline pub">Run a team? <a href="#club">Try the club demo</a></p>
+      <p class="clubline pub">Run a team? <a href="#club">Try club mode</a></p>
       <h1 class="mem">My planner</h1>
       <p class="lede mem">Mark your lectures and your training will fit around them. Tap a Gym or Run slot to see the session, then tick it off when it’s done.</p>
       <a class="btn alt mem" href="#checkout">Get Plus</a>
@@ -2033,50 +2041,61 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
 <main id="view-club" hidden>
   <div class="about-top">
     <p class="eyebrow">Clubs</p>
-    <h1 class="about-h1">Club mode <span class="soon">Preview</span></h1>
-    <p class="lede">See how a club or team would use LectureLift: one login for the squad, every Plus feature unlocked, and the site in the club’s colours. This is a preview, so nothing is stored on a server.</p>
+    <h1 class="about-h1">Club mode <span class="soon">Early version</span></h1>
+    <p class="lede">Getting a whole squad to training is the hard part. Club mode shows who is free around lectures, helps you pick the time most of the squad can make, and lets a coach send one message to the team.</p>
+    <ol class="clsteps">
+      <li><b>1</b><span>Add your squad and their positions.</span></li>
+      <li><b>2</b><span>See when everyone is free and pick the best time.</span></li>
+      <li><b>3</b><span>Add sessions and a message. Players tick them off.</span></li>
+    </ol>
   </div>
   <div class="auth">
     <div class="pcard" id="clubOut">
-      <h3>Club login</h3>
-      <form id="clForm" novalidate>
-        <label class="per" for="clEmail">Club email</label>
-        <input type="text" id="clEmail" class="txt" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Club email">
-        <label class="per" for="clPass">Club password</label>
-        <input type="password" id="clPass" class="txt" autocomplete="off" placeholder="Password">
-        <p class="plan-note" id="clErr" role="alert" hidden>Those details don’t match the demo club. Use the one listed below.</p>
-        <div class="actions"><button type="submit" class="btn">Log in to club mode</button></div>
-      </form>
+      <h3>Try club mode</h3>
+      <p class="plan-sub">Pick a side to see how it works, using an example squad. It takes one tap.</p>
       <div class="tryrow" id="clTryRow">
-        <button type="button" class="btn" id="clTry">Try the coach demo in one tap</button>
-        <button type="button" class="btn alt" id="clTryP">Or see it as a player</button>
-        <p class="plan-note">Fills in an example squad so you can see it working straight away. Coaches plan the week and players tick sessions off. Nothing leaves your device.</p>
+        <div class="bigtry">
+          <button type="button" class="btn" id="clTry">See it as a coach</button>
+          <button type="button" class="btn alt" id="clTryP">See it as a player</button>
+        </div>
+        <p class="plan-note">Coaches plan the week and players tick sessions off. This early version saves everything on your device only, so shared squads across phones are not live yet.</p>
       </div>
-      <div class="clubdemo">
-        <h4>Demo club for this preview</h4>
-        <ul id="clDemo"></ul>
-        <p class="plan-note" style="margin:.7rem 0 0">Do not type a real password here. Real club logins are not built yet, so these demo details only show how it will look.</p>
-      </div>
+      <details class="cllogin">
+        <summary>I have club login details</summary>
+        <form id="clForm" novalidate>
+          <label class="per" for="clEmail">Club email</label>
+          <input type="text" id="clEmail" class="txt" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Club email">
+          <label class="per" for="clPass">Club password</label>
+          <input type="password" id="clPass" class="txt" autocomplete="off" placeholder="Password">
+          <p class="plan-note" id="clErr" role="alert" hidden>Those details don’t match. Check them, or use the example logins below.</p>
+          <div class="actions"><button type="submit" class="btn">Log in to club mode</button></div>
+        </form>
+        <div class="clubdemo">
+          <h4>Example club logins</h4>
+          <ul id="clDemo"></ul>
+          <p class="plan-note" style="margin:.7rem 0 0">Real club logins are not open yet, so these example details are for trying it out. Please don’t type a real password.</p>
+        </div>
+      </details>
     </div>
     <div class="pcard" id="clubIn" hidden>
-      <h3 id="clName">Club</h3>
+      <h3><span class="clmono" id="clMono" aria-hidden="true"></span><span id="clName">Club</span></h3>
       <p class="plan-sub">Club mode is on. The site now uses your club’s colours.</p>
       <dl class="plan-dl">
-        <dt>Plan</dt><dd>Club plan (preview)</dd>
+        <dt>Plan</dt><dd>Club plan (early version)</dd>
         <dt>Squad</dt><dd>Up to 30 players</dd>
         <dt>Features</dt><dd>Everything in Plus</dd>
-        <dt>Price</dt><dd>£30 a month for the club</dd>
+        <dt>Planned price</dt><dd>£30 a month for the club (nothing is charged yet)</dd>
       </dl>
       <label class="per" for="clColour" id="clColourLbl">Club colour</label>
       <div id="clColourRow" style="display:flex; align-items:center; gap:.7rem; margin-bottom:1rem"><input type="color" id="clColour" aria-label="Club colour"><span class="plan-note" style="margin:0">Pick your club’s main colour to see the site change.</span></div>
       <div class="actions"><a class="btn" href="#app">Open my space</a><a class="btn alt" href="#plus">See Plus features</a><button type="button" class="btn alt" id="clLeave">Leave club mode</button></div>
-      <p class="plan-note" style="margin-top:1rem">Know a club captain? <a id="clShare" href="https://wa.me/" target="_blank" rel="noopener noreferrer">Send them this demo on WhatsApp</a></p>
-      <p class="plan-note">Players would log in with the club details and get their own plan built around their own lectures.</p>
+      <p class="plan-note" style="margin-top:1rem">Know a club captain? <a id="clShare" href="https://wa.me/" target="_blank" rel="noopener noreferrer">Send this page to them on WhatsApp</a></p>
+      <p class="plan-note">Players will log in with the club details and get their own plan built around their own lectures. For now, this early version lives on one device.</p>
     </div>
 
     <div class="pcard" id="clubAdmin" hidden>
       <h3>Coach admin</h3>
-      <p class="plan-sub">Plan the squad&rsquo;s week in a few taps. In this preview the squad is made up and everything is saved on this device only.</p>
+      <p class="plan-sub">Plan the squad&rsquo;s week in a few taps. Your squad and plans are saved on this device only for now, so they won&rsquo;t show on other phones yet.</p>
       <p class="plan-note adtoast" id="adMsg" role="status" hidden></p>
       <div class="cstats" id="adStats" aria-label="Squad summary"></div>
       <div class="btnrow"><button type="button" class="chip" id="adToggleAll">Close all sections</button></div>
@@ -2086,7 +2105,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
         <div class="adbody">
           <label class="per" for="cfSport">Sport</label>
           <select id="cfSport"><option value="rugby">Rugby</option><option value="football">Football</option><option value="hockey">Hockey</option><option value="netball">Netball</option><option value="basketball">Basketball</option><option value="cricket">Cricket</option></select>
-          <p class="plan-sub" style="margin:.8rem 0 .3rem">Positions. Change anyone&rsquo;s group if the demo guessed wrong.</p>
+          <p class="plan-sub" style="margin:.8rem 0 .3rem">Positions. Change anyone&rsquo;s group if the guess is wrong.</p>
           <div class="posgrid" id="cfPos"></div>
           <p style="margin:1rem 0 .3rem; font-weight:600">Who is it for?</p>
           <div class="btnrow" id="cfGroups" style="margin-bottom:.5rem"></div>
@@ -2099,7 +2118,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
       <details class="adsec" open>
         <summary>2. When is everyone free</summary>
         <div class="adbody">
-          <p class="plan-sub" style="margin:0">Find the best time for a session. These are made-up timetables for the demo squad. In the real product this would use each player&rsquo;s own timetable, and only with their permission.</p>
+          <p class="plan-sub" style="margin:0">Find the best time for a session. These example timetables stand in for a real squad. Real players&rsquo; own timetables would only ever be used with their permission.</p>
           <label class="per" for="fwScope">Show availability for</label>
           <select id="fwScope"></select>
           <label class="tickrow" style="margin-top:.6rem"><input type="checkbox" id="fwMine"><span>Add me, using the timetable in my own planner (this device only)</span></label>
@@ -2199,7 +2218,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
         <summary>8. Try it with example data</summary>
         <div class="adbody">
           <div class="btnrow"><button type="button" class="btn alt" id="exLoad">Load example data</button><button type="button" class="btn alt" id="exReset">Clear all club data</button></div>
-          <p class="plan-note">Example data adds sample sessions, ticks, a message and a fixture for the made-up squad so you can see how it looks.</p>
+          <p class="plan-note">Example data adds sample sessions, ticks, a message and a fixture for the example squad so you can see how it looks.</p>
         </div>
       </details>
     </div>
@@ -2266,6 +2285,10 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
     <p class="lede">A short list of what we have added lately. LectureLift is built by one student, and it gets better a little every week.</p>
   </div>
   <div class="inst">
+    <p class="wndate">27 November 2026</p>
+    <ul class="wnlist">
+      <li><strong>Club mode looks more finished</strong><span>The club page now starts with what it does, three steps, and two big buttons: see it as a coach or as a player. The example logins are tucked away, and the wording is clearer about what is an early version.</span></li>
+    </ul>
     <p class="wndate">26 November 2026</p>
     <ul class="wnlist">
       <li><strong>Clearer home page</strong><span>The main button is now Try the planner, with Make a free account next to it, a link to the club demo, and a Today marker on the day buttons.</span></li>
@@ -2803,10 +2826,10 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
         <input type="text" id="lgClEmail" class="txt" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Club email">
         <label class="per" for="lgClPass">Club password</label>
         <input type="password" id="lgClPass" class="txt" autocomplete="off" placeholder="Password">
-        <p class="plan-note" id="lgClErr" role="alert" hidden>Those details don’t match the demo club. Try again, or see the demo details on the Club mode page.</p>
+        <p class="plan-note" id="lgClErr" role="alert" hidden>Those details don’t match. Try again, or see the example logins on the Club mode page.</p>
         <div class="actions"><button type="submit" class="btn">Log in to club mode</button></div>
       </form>
-      <p class="plan-note">This is a preview, so don’t type a real password. Real club logins aren’t built yet. <a href="#club">See the Club mode page</a> for the demo details.</p>
+      <p class="plan-note">Real club logins aren’t open yet, so please don’t type a real password. <a href="#club">See the Club mode page</a> for the example logins.</p>
     </div>
 
     <div class="pcard" id="panelSignup" hidden>
@@ -5153,7 +5176,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
     var ad=document.getElementById('clubAdmin'), co=document.getElementById('clubCoach');
     ad.hidden=!(st&&st.admin); co.hidden=!(st&&!st.admin);
     if(st) renderPlans();
-    if(st){ document.getElementById('clName').textContent=st.name+(st.admin?' (coach admin)':''); document.getElementById('clColour').value=st.c; var hide=!!st.mono; document.getElementById('clColourRow').style.display=hide?'none':'flex'; document.getElementById('clColourLbl').style.display=hide?'none':'block'; }
+    if(st){ document.getElementById('clName').textContent=st.name+(st.admin?' (coach admin)':''); var mo=document.getElementById('clMono'); if(mo){ mo.textContent=st.name.charAt(0).toUpperCase(); mo.style.background=st.c; mo.style.color=ink(st.c); } document.getElementById('clColour').value=st.c; var hide=!!st.mono; document.getElementById('clColourRow').style.display=hide?'none':'flex'; document.getElementById('clColourLbl').style.display=hide?'none':'block'; }
   }
   function fillSquad(sel){ if(sel.options.length) return; SQUAD.forEach(function(n){ var o=document.createElement('option'); o.textContent=n; sel.appendChild(o); }); }
   var FX='lecturelift-clubfix-v1', CH='lecturelift-clubchal-v1', fixtures=[];
