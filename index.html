@@ -2079,7 +2079,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
     </div>
     <div class="pcard" id="clubIn" hidden>
       <h3><span class="clmono" id="clMono" aria-hidden="true"></span><span id="clName">Club</span></h3>
-      <p class="plan-sub">Club mode is on. The site now uses your club’s colours.</p>
+      <p class="plan-sub">Club mode is on. Pick a colour below if you want the site to match your club.</p>
       <dl class="plan-dl">
         <dt>Plan</dt><dd>Club plan (early version)</dd>
         <dt>Squad</dt><dd>Up to 30 players</dd>
@@ -2288,6 +2288,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
     <p class="wndate">28 November 2026</p>
     <ul class="wnlist">
       <li><strong>Back-to-top arrow stays out of the way</strong><span>The arrow now appears only when you scroll up, so it no longer sits over the text you are reading. The Pricing page button for clubs now says Try club mode.</span></li>
+      <li><strong>Club mode keeps the normal colours</strong><span>The example club no longer turns the site black and white. It uses the usual LectureLift colours, and you can still pick your own club colour.</span></li>
       <li><strong>New club page headline</strong><span>The club page now opens with &ldquo;Who&rsquo;s free on Tuesday?&rdquo; and a clearer one-line explanation of what club mode does.</span></li>
     </ul>
     <p class="wndate">27 November 2026</p>
@@ -5159,8 +5160,8 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
 (function(){
   var KEY='lecturelift-club-v1';
   var DEMO=[
-    {name:'Pira', email:'pira', pw:'pira', c:'#111111', mono:true},
-    {name:'Pira', email:'pira-admin', pw:'pira-admin', c:'#111111', mono:true, admin:true}
+    {name:'Example club', email:'player', pw:'player', c:'#4868ee', def:true},
+    {name:'Example club', email:'coach', pw:'coach', c:'#4868ee', def:true, admin:true}
   ];
   var SQUAD=['Alex','Ben','Callum','Dan','Eli','Finn','Gareth','Harry'];
   var PK2='lecturelift-clubplans-v1', plans={};
@@ -5169,14 +5170,14 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
   var root=document.documentElement, st=null;
   var out=document.getElementById('clubOut'), inn=document.getElementById('clubIn');
   if(!out||!inn) return;
-  function load(){ try{ var r=localStorage.getItem(KEY); st=r?JSON.parse(r):null; }catch(e){ st=null; } if(st&&!/^#[0-9a-f]{6}$/i.test(st.c)) st=null; if(st&&st.mono!==true) st.mono=false; if(st) st.admin=(st.admin===true); }
+  function load(){ try{ var r=localStorage.getItem(KEY); st=r?JSON.parse(r):null; }catch(e){ st=null; } if(st&&!/^#[0-9a-f]{6}$/i.test(st.c)) st=null; if(st&&st.mono!==true) st.mono=false; if(st) st.def=(st.def===true); if(st) st.admin=(st.admin===true); }
   function save(){ try{ if(st) localStorage.setItem(KEY,JSON.stringify(st)); else localStorage.removeItem(KEY); }catch(e){} }
   function ink(hex){ var n=parseInt(hex.slice(1),16), r=n>>16&255, g=n>>8&255, b=n&255; var l=(0.299*r+0.587*g+0.114*b)/255; return l>0.6?'#14213d':'#ffffff'; }
   function apply(){
     var t=document.getElementById('plusBarTxt'), a=document.getElementById('plusBarLink');
     root.removeAttribute('data-club'); root.style.removeProperty('--accent'); root.style.removeProperty('--accent-ink');
     if(st){
-      if(st.mono){ root.setAttribute('data-club','mono'); } else { root.style.setProperty('--accent',st.c); root.style.setProperty('--accent-ink',ink(st.c)); }
+      if(st.mono){ root.setAttribute('data-club','mono'); } else if(!st.def){ root.style.setProperty('--accent',st.c); root.style.setProperty('--accent-ink',ink(st.c)); }
       if(t) t.textContent='Club mode: '+st.name+'. Plus is unlocked for the squad.';
       if(a){ a.textContent='Club space'; a.setAttribute('href','#club'); }
     } else {
@@ -5187,7 +5188,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
     var ad=document.getElementById('clubAdmin'), co=document.getElementById('clubCoach');
     ad.hidden=!(st&&st.admin); co.hidden=!(st&&!st.admin);
     if(st) renderPlans();
-    if(st){ document.getElementById('clName').textContent=st.name+(st.admin?' (coach admin)':''); var mo=document.getElementById('clMono'); if(mo){ mo.textContent=st.name.charAt(0).toUpperCase(); mo.style.background=st.c; mo.style.color=ink(st.c); } document.getElementById('clColour').value=st.c; var hide=!!st.mono; document.getElementById('clColourRow').style.display=hide?'none':'flex'; document.getElementById('clColourLbl').style.display=hide?'none':'block'; }
+    if(st){ document.getElementById('clName').textContent=st.name+(st.admin?' (coach admin)':''); var mo=document.getElementById('clMono'); if(mo){ mo.textContent=st.name.charAt(0).toUpperCase(); if(st.def){ mo.style.background='var(--accent)'; mo.style.color='var(--accent-ink)'; } else { mo.style.background=st.c; mo.style.color=ink(st.c); } } document.getElementById('clColour').value=st.c; var hide=!!st.mono; document.getElementById('clColourRow').style.display=hide?'none':'flex'; document.getElementById('clColourLbl').style.display=hide?'none':'block'; }
   }
   function fillSquad(sel){ if(sel.options.length) return; SQUAD.forEach(function(n){ var o=document.createElement('option'); o.textContent=n; sel.appendChild(o); }); }
   var FX='lecturelift-clubfix-v1', CH='lecturelift-clubchal-v1', fixtures=[];
@@ -5565,22 +5566,22 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
     var hit=null; DEMO.forEach(function(d){ if(d.email===em && d.pw===pw) hit=d; });
     var err=document.getElementById('clErr');
     if(!hit){ err.hidden=false; return; }
-    err.hidden=true; st={name:hit.name,c:hit.c,mono:!!hit.mono,admin:!!hit.admin}; save();
+    err.hidden=true; st={name:hit.name,c:hit.c,mono:!!hit.mono,def:!!hit.def,admin:!!hit.admin}; save();
     document.getElementById('clPass').value=''; apply();
   });
-  document.getElementById('clColour').addEventListener('input',function(){ if(!st) return; st.c=this.value; save(); apply(); });
+  document.getElementById('clColour').addEventListener('input',function(){ if(!st) return; st.c=this.value; st.def=false; save(); apply(); });
   document.getElementById('clLeave').addEventListener('click',function(){ st=null; save(); apply(); });
   var tryBtn=document.getElementById('clTry');
   if(tryBtn) tryBtn.addEventListener('click',function(){
-    var d=DEMO[1]; st={name:d.name,c:d.c,mono:!!d.mono,admin:true}; save(); apply();
+    var d=DEMO[1]; st={name:d.name,c:d.c,mono:!!d.mono,def:!!d.def,admin:true}; save(); apply();
     var ex=document.getElementById('exLoad'); if(ex) ex.click();
     var ad=document.getElementById('clubAdmin'); if(ad&&ad.scrollIntoView) ad.scrollIntoView();
   });
   var tryP=document.getElementById('clTryP');
   if(tryP) tryP.addEventListener('click',function(){
-    var a=DEMO[1], pl=DEMO[0]; st={name:a.name,c:a.c,mono:!!a.mono,admin:true}; apply();
+    var a=DEMO[1], pl=DEMO[0]; st={name:a.name,c:a.c,mono:!!a.mono,def:!!a.def,admin:true}; apply();
     var ex=document.getElementById('exLoad'); if(ex) ex.click();
-    st={name:pl.name,c:pl.c,mono:!!pl.mono,admin:false}; save(); apply();
+    st={name:pl.name,c:pl.c,mono:!!pl.mono,def:!!pl.def,admin:false}; save(); apply();
     var co=document.getElementById('clubCoach'); if(co&&co.scrollIntoView) co.scrollIntoView();
   });
   var shr=document.getElementById('clShare');
