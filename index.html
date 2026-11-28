@@ -747,7 +747,7 @@ nav:not(.at-end){-webkit-mask-image:linear-gradient(90deg,#000 86%,transparent);
 .excard.locked h3::after{content:" \1F512"; font-size:.85em}
 .skip{position:absolute; left:-999px; top:.5rem; z-index:100; background:var(--accent); color:var(--accent-ink); padding:.6rem 1rem; border-radius:.7rem; font-weight:600}
 .skip:focus{left:.75rem}
-.totop{position:fixed; right:1rem; bottom:1rem; z-index:40; width:2.9rem; height:2.9rem; border-radius:50%; border:1px solid var(--line); background:color-mix(in srgb, var(--surface) 88%, transparent); backdrop-filter:blur(8px); color:var(--ink); font-size:1.2rem; cursor:pointer; box-shadow:0 6px 18px rgba(30,40,90,.15); transition:transform .2s, box-shadow .2s}
+.totop{position:fixed; right:.7rem; bottom:.9rem; z-index:40; width:44px; height:44px; border-radius:50%; border:1px solid var(--line); background:color-mix(in srgb, var(--surface) 88%, transparent); backdrop-filter:blur(8px); color:var(--ink); font-size:1.2rem; cursor:pointer; box-shadow:0 6px 18px rgba(30,40,90,.15); transition:transform .2s, box-shadow .2s}
 .totop:hover{transform:translateY(-2px)}
 .totop[hidden]{display:none}
 .exclear{margin:.1rem 0 .6rem}
@@ -2040,9 +2040,9 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
 
 <main id="view-club" hidden>
   <div class="about-top">
-    <p class="eyebrow">Clubs</p>
-    <h1 class="about-h1">Club mode <span class="soon">Early version</span></h1>
-    <p class="lede">Getting a whole squad to training is the hard part. Club mode shows who is free around lectures, helps you pick the time most of the squad can make, and lets a coach send one message to the team.</p>
+    <p class="eyebrow">Club mode</p>
+    <h1 class="about-h1">Who&rsquo;s free on Tuesday? <span class="soon">Early version</span></h1>
+    <p class="lede">Find out in one tap, and plan the week around everyone&rsquo;s lectures. Club mode shows who is free, helps you pick the time most of the squad can make, and lets a coach send one message to the team.</p>
     <ol class="clsteps">
       <li><b>1</b><span>Add your squad and their positions.</span></li>
       <li><b>2</b><span>See when everyone is free and pick the best time.</span></li>
@@ -2285,6 +2285,11 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
     <p class="lede">A short list of what we have added lately. LectureLift is built by one student, and it gets better a little every week.</p>
   </div>
   <div class="inst">
+    <p class="wndate">28 November 2026</p>
+    <ul class="wnlist">
+      <li><strong>Back-to-top arrow stays out of the way</strong><span>The arrow now appears only when you scroll up, so it no longer sits over the text you are reading. The Pricing page button for clubs now says Try club mode.</span></li>
+      <li><strong>New club page headline</strong><span>The club page now opens with &ldquo;Who&rsquo;s free on Tuesday?&rdquo; and a clearer one-line explanation of what club mode does.</span></li>
+    </ul>
     <p class="wndate">27 November 2026</p>
     <ul class="wnlist">
       <li><strong>Club mode looks more finished</strong><span>The club page now starts with what it does, three steps, and two big buttons: see it as a coach or as a player. The example logins are tucked away, and the wording is clearer about what is an early version.</span></li>
@@ -2966,7 +2971,7 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
         <li>Cancel any time</li>
       </ul>
       <p class="plan-note">Club plans aren’t open yet and nothing is charged. Register your interest and I’ll get in touch when they are. Price and squad size may change based on what clubs tell us.</p>
-      <div class="btnrow plan-cta"><a class="btn" href="#join">Register your club’s interest</a><a class="btn alt" href="#club">Club login (preview)</a></div>
+      <div class="btnrow plan-cta"><a class="btn" href="#join">Register your club’s interest</a><a class="btn alt" href="#club">Try club mode</a></div>
     </section>
     <section class="clubplan plan-card" id="clubPlusPlan" aria-labelledby="clubPlusH">
       <h3 id="clubPlusH">Club+ <span class="soon">Coming soon</span></h3>
@@ -4976,10 +4981,16 @@ html.cloud #panelLogin,html.cloud #panelSignup{display:none!important}
   window.dispatchEvent(new Event('ll-favs'));
   var top=document.getElementById('toTop');
   if(top){
-    var tick=false;
+    var tick=false, lastY=window.scrollY;
+    /* Only show the arrow while scrolling up, so it never sits over text you are reading downwards. */
     window.addEventListener('scroll',function(){
       if(tick) return; tick=true;
-      requestAnimationFrame(function(){ top.hidden=!(window.scrollY>700); tick=false; });
+      requestAnimationFrame(function(){
+        var y=window.scrollY, up=y<lastY-4, down=y>lastY+4;
+        if(y<=700) top.hidden=true; else if(up) top.hidden=false; else if(down) top.hidden=true;
+        if(up||down) lastY=y;
+        tick=false;
+      });
     },{passive:true});
     top.addEventListener('click',function(){ window.scrollTo({top:0,behavior:'smooth'}); });
   }
